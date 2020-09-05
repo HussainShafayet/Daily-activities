@@ -63,4 +63,8 @@ td {
 .login input[type="submit"]:hover {
     color: white;
     transition: 0.7s;
+    -webkit-transition: 0.7s;
+    -moz-transition: 0.7s;
+    -ms-transition: 0.7s;
+    -o-transition: 0.7s;
 }
