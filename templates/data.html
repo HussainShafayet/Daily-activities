@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block title %}Expenses{% endblock %}{% block content %}
+<table class="tab1">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Date/Time</th>
+            <th>Purpose</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        {% for exp in exps %}
+        <tr>
+            <td>{{exp.id}}</td>
+            <td>{{exp.date}}</td>
+            <td>{{exp.purpose}}</td>
+            <td>{{exp.amount}}</td>
+        </tr>
+
+        {% endfor %}
+    </tbody>
+    </>{% endblock %}
