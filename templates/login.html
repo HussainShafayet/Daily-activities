@@ -1,11 +1,15 @@
 {% extends 'base.html' %}{% block title %}LogIn{% endblock %}{% block content %}
 
 
-<h1>Login Here</h1>
+
 <div class=" container">
+    <h1>Login Here</h1>
     <form action="" method="POST" class="login">
-        {% csrf_token %} {{log_form}}
+        {% csrf_token %} {{log_form}} {% if error %}
+        <p class="text-danger">{{error}}</p>
+        {% endif %}
         <input type="submit" value="Login">
+
     </form>
 </div>
 {% endblock %}
