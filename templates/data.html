@@ -1,22 +1,27 @@
 {% extends 'base.html' %} {% block title %}Expenses{% endblock %}{% block content %}
-<table class="tab1">
+<table id="tab1">
     <thead>
         <tr>
-            <th>Id</th>
+            <th>No</th>
             <th>Date/Time</th>
             <th>Purpose</th>
+            <th>Amount</th>
+            <th>Actions</th>
         </tr>
 
     </thead>
     <tbody>
         {% for exp in exps %}
         <tr>
-            <td>{{exp.id}}</td>
+            <td>{{forloop.counter}}</td>
             <td>{{exp.date}}</td>
             <td>{{exp.purpose}}</td>
             <td>{{exp.amount}}</td>
+            <td><a href="{% url 'edit' exp.id %}" class="btn btn-primary" id="data_edit">Edit</a>
+                <a href="{% url 'delete' exp.id %}" class="btn btn-danger" id="data_del">Delete</a>
+            </td>
         </tr>
 
         {% endfor %}
     </tbody>
-    </>{% endblock %}
+</table>{% endblock %}

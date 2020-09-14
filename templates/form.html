@@ -1,26 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+{% extends 'base.html' %}{% block title %}Add{% endblock %}{% block content %}
+<div class="container">
     <form method="POST" class="form-group">
-        {% csrf_token %} {{exp_form}}
-        <button type="submit" class="btn btn-success">Submit</button>
+        {% csrf_token %}
+        <table>
+            {% for field in exp_form %}
+            <tr>
+                <th>{{field.label_tag}}</th>
+                <td>
+                    {{ field.errors }} {{ field }}{% if forloop.counter == 1 %}
+                    <a href="{% url 'category' %}">+</a>{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <form action="" method="POST">
+            {% csrf_token %} {{category}}
+            <button>Submit</button>
+        </form>
     </form>
+</div>
 
-</body>
 
-</html>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
-from .models import Expenses
-from .forms import MyExpenses, Register, UserLoginForm
+from .models import Expenses,Category
+from .forms import MyExpenses, Register, UserLoginForm,Add_category
 from django.contrib.auth import authenticate, login, logout as django_logout
 from django.contrib.auth.decorators import login_required
 
@@ -43,30 +43,83 @@ def user_login(request):
 
 def logout(request):
     django_logout(request)
-    return redirect('/')
+    return redirect('main')
 
 
 def main(request):
     return render(request, 'main.html')
 
+def about(request):
+    return render(request,'about.html')
+
 @login_required(login_url='login')
-def data(request):
-    exps = Expenses.objects.all()
+def data(request, id):
+    current_user=request.user
+    exps = Expenses.objects.filter(user=current_user,category__id=id)
     return render(request, 'data.html', {'exps':exps})
 
 
 @login_required(login_url='login')
 def form(request):
     if request.method == 'POST':
-        exp_form = MyExpenses(request.POST)
+        exp_form = MyExpenses(request.user,request.POST)
         if exp_form.is_valid():
-            exp_form.save()
-        return redirect('main')
+            exp = Expenses()
+            exp.user = request.user
+            exp.category=exp_form.cleaned_data['category']
+            exp.purpose = exp_form.cleaned_data['purpose']
+            exp.amount = exp_form.cleaned_data['amount']
+            exp.save()
+        return redirect('show')
 
     else:
-        exp_form = MyExpenses()
-    return render(request, 'form.html', {'exp_form': exp_form})
+        exp_form = MyExpenses(request.user)
+        exp_form.user=request.user
+        contex = {
+            'exp_form':exp_form
+        }
+    return render(request, 'form.html', contex)
 
 
+def add_category(request):
+    if request.method == 'POST':
+        category = Add_category(request.POST)
+        if category.is_valid():
+            ct = Category.objects.all()
+            cat = Category()
+            cat.user = request.user
+            cat.category = category.cleaned_data['category']
+            for i in ct:
+                if i.category == cat.category and i.user==request.user:
+                    return redirect('/')
+            cat.save()
+            return redirect('add')
+    else:
+        category = Add_category()
+    return render(request, 'form.html', {'category': category})
+
+
+@login_required(login_url='login')
+def show_catg(request):
+    cur_user = request.user
+    catgs = Category.objects.filter(user=cur_user)
+    return render(request, 'base.html', {'catgs': catgs})
+
+def edit(request, id):
+    expense = Expenses.objects.get(id=id)
+    if request.method == 'POST':
+        expe=MyExpenses(request.POST,instance=expense)
+        if expe.is_valid():
+            expe.save()
+            return redirect('data')
+    else:
+        form = MyExpenses(instance=expense, user=request.user)
+        contex = {
+            'form':form
+        }
+    return render(request, 'edit.html', contex)
     
-
+def delete(request, id):
+    expense = Expenses.objects.get(id=id)
+    expense.delete()
+    return redirect('data')

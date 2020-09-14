@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#but').click(function() {
-        $('#h').hide(1000)
+    $('#data_del').on('click', function() {
+        return confirm('Are you sure?');
     });
 });
