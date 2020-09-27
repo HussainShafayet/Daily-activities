@@ -210,7 +210,8 @@
      
      @media only screen and (max-width: 600px) {
          nav {
-             background-color: black;
+             background-color: #3498db;
+             flex-direction: column;
          }
          nav ul {
              flex-direction: column;
