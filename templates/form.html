@@ -8,14 +8,16 @@
                 <th>{{field.label_tag}}</th>
                 <td>
                     {{ field.errors }} {{ field }}{% if forloop.counter == 1 %}
-                    <a href="{% url 'category' %}">+</a>{% endif %}
+                    <a href="{% url 'category' %}"><i class="fas fa-plus"></i></a>{% endif %}
                 </td>
             </tr>
             {% endfor %}
         </table>
         <form action="" method="POST">
-            {% csrf_token %} {{category}}
-            <button>Submit</button>
+            {% csrf_token %} {{category}} {% if error %}
+            <p class="text-danger">{{error}}</p>
+            {% endif %}
+            <input type="submit" name="" id="" value="Submit">
         </form>
     </form>
 </div>

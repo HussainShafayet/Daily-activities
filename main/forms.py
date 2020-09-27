@@ -13,7 +13,7 @@ class MyExpenses(forms.ModelForm):
         ]
 
     def __init__(self, user, *args, **kwargs):
-        super(MyExpenses, self).__init__(*args, **kwargs)
+        super(MyExpenses,self).__init__(*args, **kwargs)
         self.fields['category'].queryset=Category.objects.filter(user=user)
 
 

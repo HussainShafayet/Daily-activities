@@ -3,6 +3,7 @@ from .models import Expenses,Category
 from .forms import MyExpenses, Register, UserLoginForm,Add_category
 from django.contrib.auth import authenticate, login, logout as django_logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 
 
 
@@ -35,7 +36,6 @@ def user_login(request):
                     
                 }
                 return render(request,'login.html',contex)
-        print("Login Successfully")
     else:
         log_form =UserLoginForm()
     return render(request, 'login.html', {'log_form': log_form})
@@ -53,10 +53,31 @@ def about(request):
     return render(request,'about.html')
 
 @login_required(login_url='login')
-def data(request, id):
-    current_user=request.user
-    exps = Expenses.objects.filter(user=current_user,category__id=id)
-    return render(request, 'data.html', {'exps':exps})
+def data(request):
+    current_user = request.user
+    catgs = Category.objects.filter(user=current_user)
+    if request.POST.get('categ'):
+        cat = request.POST.get('categ')
+        id = Category.objects.get(user=current_user,category=cat)
+        exps = Expenses.objects.filter(user=current_user, category=id).order_by('date')
+        total_exps = exps.aggregate(Sum('amount'))
+        context = {
+            'cat':cat,
+            'catgs': catgs,
+            'total_exps': total_exps,
+            'exps': exps
+        }
+        return render(request, 'data.html', context)
+    else:
+        catgs = Category.objects.filter(user=current_user)
+        exps = Expenses.objects.filter(user=current_user).order_by('category','date',)
+        total_exps = exps.aggregate(Sum('amount'))
+        context = {
+            'catgs': catgs,
+            'total_exps': total_exps,
+            'exps': exps
+        }
+        return render(request, 'data.html', context)
 
 
 @login_required(login_url='login')
@@ -70,7 +91,7 @@ def form(request):
             exp.purpose = exp_form.cleaned_data['purpose']
             exp.amount = exp_form.cleaned_data['amount']
             exp.save()
-        return redirect('show')
+        return redirect('data')
 
     else:
         exp_form = MyExpenses(request.user)
@@ -90,8 +111,13 @@ def add_category(request):
             cat.user = request.user
             cat.category = category.cleaned_data['category']
             for i in ct:
-                if i.category == cat.category and i.user==request.user:
-                    return redirect('/')
+                if i.category == cat.category and i.user == request.user:
+                    contex = {
+                        'category': Add_category(),
+                        'error':"This category already added"
+                    }
+                    return render(request, 'form.html', contex)
+
             cat.save()
             return redirect('add')
     else:
@@ -103,15 +129,16 @@ def add_category(request):
 def show_catg(request):
     cur_user = request.user
     catgs = Category.objects.filter(user=cur_user)
-    return render(request, 'base.html', {'catgs': catgs})
+    return render(request, 'data.html', {'catgs': catgs})
 
 def edit(request, id):
     expense = Expenses.objects.get(id=id)
     if request.method == 'POST':
-        expe=MyExpenses(request.POST,instance=expense)
-        if expe.is_valid():
-            expe.save()
-            return redirect('data')
+        expense.category=Category.objects.get(id=request.POST['category'])
+        expense.purpose=request.POST['purpose']
+        expense.amount=request.POST['amount']
+        expense.save()
+        return redirect('data')
     else:
         form = MyExpenses(instance=expense, user=request.user)
         contex = {

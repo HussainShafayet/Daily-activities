@@ -10,23 +10,37 @@
 </head>
 
 <body>
-    <div id="menu">
+    <nav>
+        <div id="logo">
+            <h1>Daily Activities</h1>
+        </div>
+
         <ul>
-            <li> <a href="{% url 'main' %}">home</a> </li>
-            <li> <a href="{% url 'about' %}">About</a> </li>
-            <li> <a href="{% url 'add' %}">Add</a> </li>
-            <li> <a href="{% url 'show' %}">show</a>
-                <ul>
-                    {% for catg in catgs %}
-                    <li>
-                        <a href="{% url 'data' catg.id %}">{{catg.category}}</a>
-                    </li>{% endfor %}
-                </ul>
+            <li class="items">
+                <a href="{% url 'main' %}"> <i class="fas fa-home"></i>home</a>
             </li>
-            <li> <a href="">contact</a> </li>{% if user.is_authenticated %}
-            <li class="con"> <a href="{% url 'logout' %}">logout</a> </li>{% else %}
-            <li class="con"> <a href="{% url 'register'%}">sign up</a> </li>
-            <li class="con"> <a href="{% url 'login' %}">login</a> </li>{% endif %}
+            <li class="items"> <a href="{% url 'about' %}">About</a> </li>
+            <li class="items"> <a href="{% url 'add' %}">Add</a> </li>
+            <li class="items"> <a href="{% url 'data' %}">show</a></li>
+            <li class="items"> <a href="">contact</a> </li>
+        </ul>
+
+        <div id="prof">
+            <ul>
+                {% if user.is_authenticated %}
+                <li class="pro">Hello {{user.username}}</li>
+                <li class="pro"><i id="icon" class="far fa-user-circle "></i></li>{% else %}
+                <li> <a href="{% url 'register'%}">sign up</a> </li>
+                <li> <a href="{% url 'login' %}">login</a> </li>{% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div id="side-menu">
+
+        <ul>
+            <li><a href="">profile</a></li>
+            <li><a href="">setting</a></li>
+            <li><a href="{% url 'logout' %}">logout</a></li>
         </ul>
 
     </div>
@@ -35,6 +49,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://kit.fontawesome.com/bf12ee2437.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
