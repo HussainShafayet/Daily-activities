@@ -5,8 +5,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'style/main.css' %}" type="text/css">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'style/main.css' %}" type="text/css"> {% block style %}{% endblock %}
 </head>
 
 <body>
@@ -17,12 +19,14 @@
 
         <ul>
             <li class="items">
-                <a href="{% url 'main' %}"> <i class="fas fa-home"></i>home</a>
+                <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
             </li>
-            <li class="items"> <a href="{% url 'about' %}">About</a> </li>
-            <li class="items"> <a href="{% url 'add' %}">Add</a> </li>
-            <li class="items"> <a href="{% url 'data' %}">show</a></li>
-            <li class="items"> <a href="">contact</a> </li>
+            <li class="items"> <a href="{% url 'about' %}"><i class="fas fa-add"></i> About</a> </li>
+            <li class="items">
+                <a id="ad" href="{% url 'add' %}"><i class="fas fa-plus-circle"></i> Add</a>
+            </li>
+            <li class="items"> <a href="{% url 'data' %}"><i class="fas fa-eye"></i> show</a></li>
+            <li class="items"> <a href=""><i class="fas fa-phone-square-alt"></i> contact</a> </li>
         </ul>
 
         <div id="prof">

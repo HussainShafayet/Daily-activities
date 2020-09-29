@@ -1,5 +1,10 @@
-{% extends 'base.html' %}{% block title %}Home{% endblock %} {% block content %}
-
-
-<h1>This is home page!</h1>
-{% endblock %}
+{% extends 'base.html' %} {% load static %} {% block title %}Home{% endblock %} {% block style %}
+<style>
+    body {
+        background-image: url("{% static 'images/background.png' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+</style>
+{% endblock %} {% block content %} {% endblock %}

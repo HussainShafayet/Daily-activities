@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% block title %}Add Category{% endblock %}{% block content %}
+
+<div class="add-data">
+
+    <form action=" " method="POST">
+        {% csrf_token %} {{category}}<br>
+        <input type="submit" class="add-btn" value="Submit">
+        <a class="add-btn" href="{% url 'add' %}">Cansel</a>{% if error %}
+        <p class="text-danger">{{error}}</p>
+        {% endif %}
+
+    </form>
+</div>
+{% endblock %}

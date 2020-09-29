@@ -4,6 +4,7 @@ from .forms import MyExpenses, Register, UserLoginForm,Add_category
 from django.contrib.auth import authenticate, login, logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
+from django.contrib import messages
 
 
 
@@ -58,16 +59,30 @@ def data(request):
     catgs = Category.objects.filter(user=current_user)
     if request.POST.get('categ'):
         cat = request.POST.get('categ')
-        id = Category.objects.get(user=current_user,category=cat)
-        exps = Expenses.objects.filter(user=current_user, category=id).order_by('date')
-        total_exps = exps.aggregate(Sum('amount'))
-        context = {
-            'cat':cat,
-            'catgs': catgs,
-            'total_exps': total_exps,
-            'exps': exps
-        }
-        return render(request, 'data.html', context)
+        if cat == 'All':
+            catgs = Category.objects.filter(user=current_user)
+            exps = Expenses.objects.filter(
+            user=current_user).order_by('category', 'date',)
+            total_exps = exps.aggregate(Sum('amount'))
+            context = {
+                'cat':cat,
+                'catgs': catgs,
+                'total_exps': total_exps,
+                'exps': exps
+            }
+            return render(request, 'data.html', context)
+
+        else:
+            id = Category.objects.get(user=current_user,category=cat)
+            exps = Expenses.objects.filter(user=current_user, category=id).order_by('date')
+            total_exps = exps.aggregate(Sum('amount'))
+            context = {
+                'cat':cat,
+                'catgs': catgs,
+                'total_exps': total_exps,
+                'exps': exps
+            }
+            return render(request, 'data.html', context)
     else:
         catgs = Category.objects.filter(user=current_user)
         exps = Expenses.objects.filter(user=current_user).order_by('category','date',)
@@ -102,6 +117,7 @@ def form(request):
     return render(request, 'form.html', contex)
 
 
+@login_required(login_url='login')
 def add_category(request):
     if request.method == 'POST':
         category = Add_category(request.POST)
@@ -114,15 +130,18 @@ def add_category(request):
                 if i.category == cat.category and i.user == request.user:
                     contex = {
                         'category': Add_category(),
-                        'error':"This category already added"
+                        'error':'This category already added!!!!'
                     }
-                    return render(request, 'form.html', contex)
+                    return render(request,'category.html', contex)
 
             cat.save()
             return redirect('add')
     else:
         category = Add_category()
-    return render(request, 'form.html', {'category': category})
+        contex = {
+            'category': category
+        }
+    return render(request, 'category.html', contex)
 
 
 @login_required(login_url='login')
