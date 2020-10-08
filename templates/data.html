@@ -16,9 +16,10 @@
     <div><i id='show-icon' class="fas fa-angle-double-right fa-2x"></i></div>
 </div>
 
-<div>
+<div id="div-tab">
     <table id="tab1">
-        <caption style="font-size: 30px; margin-bottom:10px; color:rgb(34, 52, 112)">My Expenses</caption>
+        <h1 style="text-align: center;">My Expenses</h1>
+
         <thead>
             <tr>
                 <th>No</th>
@@ -38,8 +39,8 @@
                 <td>{{exp.category}}</td>
                 <td>{{exp.purpose}}</td>
                 <td style="text-align: center;">{{exp.amount}}</td>
-                <td><a href="{% url 'edit' exp.id %}" class="data_edit">Edit</a>
-                    <a href="{% url 'delete' exp.id %}" class="data_del">Delete</a>
+                <td><a href="{% url 'edit' exp.id %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'delete' exp.id %}" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             {% endfor %}

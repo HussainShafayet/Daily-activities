@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Expenses,Category
+from .models import Expenses, Category, User
 from .forms import MyExpenses, Register, UserLoginForm,Add_category
 from django.contrib.auth import authenticate, login, logout as django_logout
 from django.contrib.auth.decorators import login_required
@@ -13,11 +13,22 @@ def register(request):
     if request.method == "POST":
         user_form = Register(request.POST)
         if user_form.is_valid():
-            user_form.save()
-            return redirect('login')
+            all_email = User.objects.values_list('email',flat=True)
+            user_email = user_form.cleaned_data['email']
+            for i in all_email:
+                if i == user_email:
+                    messages.error(request,'Email Already added')
+                    return render(request,'register.html',{'user_form':user_form})
+            user_form.save() 
+            messages.success(request, 'Registration Successful')
+            return redirect('login')        
     else:
+       
         user_form = Register()
-    return render(request, 'register.html', {'user_form': user_form})
+    contex = {
+            'user_form': user_form
+            }
+    return render(request, 'register.html',contex)
 
 
 def user_login(request):
@@ -38,9 +49,9 @@ def user_login(request):
                 }
                 return render(request,'login.html',contex)
     else:
-        log_form =UserLoginForm()
-    return render(request, 'login.html', {'log_form': log_form})
-
+        log_form = UserLoginForm()
+        contex = {'log_form': log_form}
+    return render(request, 'login.html', contex)
 
 def logout(request):
     django_logout(request)
@@ -122,18 +133,17 @@ def add_category(request):
     if request.method == 'POST':
         category = Add_category(request.POST)
         if category.is_valid():
-            ct = Category.objects.all()
+            all_cat = Category.objects.all()
             cat = Category()
             cat.user = request.user
             cat.category = category.cleaned_data['category']
-            for i in ct:
+            for i in all_cat:
                 if i.category == cat.category and i.user == request.user:
                     contex = {
                         'category': Add_category(),
-                        'error':'This category already added!!!!'
+                        'error':'This category already added!'
                     }
-                    return render(request,'category.html', contex)
-
+                    return render(request, 'category.html', contex)
             cat.save()
             return redirect('add')
     else:

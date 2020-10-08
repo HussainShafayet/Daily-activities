@@ -1,13 +1,18 @@
 {% extends 'base.html' %}{% block title %}Add Category{% endblock %}{% block content %}
 
-<div class="add-data">
+<div id="add-catg">
 
     <form action=" " method="POST">
-        {% csrf_token %} {{category}}<br>
-        <input type="submit" class="add-btn" value="Submit">
-        <a class="add-btn" href="{% url 'add' %}">Cansel</a>{% if error %}
+        {% csrf_token %}
+        <table>
+            {{category.as_table}}
+        </table>{% if error %}
         <p class="text-danger">{{error}}</p>
         {% endif %}
+        <div id="catg-btn"><input type="submit" class="btn btn-primary" value="Submit">
+            <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'add' %}">Cansel</a>
+        </div>
+
 
     </form>
 </div>

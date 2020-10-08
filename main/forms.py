@@ -33,10 +33,38 @@ class Register(UserCreationForm):
             'first_name', 'last_name', 'username', 'email', 'password1', 'password2'
 
         ]
-        widgets = {
-            'first_name': forms.TextInput(attrs={'placeholder': 'First name', 'label': ''})
+        labels = {
+            'email':'Email*'
         }
+    def __init__(self,*args, **kwargs):
+        super(Register, self).__init__(*args, **kwargs)
+        
+        self.fields['first_name'].widget.attrs.update({
+            'autofocus': True,
+            'required':True,
+            'placeholder': 'First name',
+        })
+        self.fields['last_name'].widget.attrs.update({
+            'required': True,
+            'placeholder': 'Last name'
+        })
+        self.fields['username'].widget.attrs.update({
+            'placeholder': 'username',
+            'autofocus':False
+        })
+        self.fields['email'].widget.attrs.update({
+            'required': True,
+            'placeholder': 'Email',
+            
+        })
+        self.fields['password1'].widget.attrs.update({
+            'placeholder': 'Password'
+        })
+        self.fields['password2'].widget.attrs.update({
+            'placeholder': 'Confirm password'
+        })
 
+        
 
 
 class UserLoginForm(forms.Form):

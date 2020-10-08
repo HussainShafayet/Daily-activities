@@ -1,20 +1,19 @@
 {% extends 'base.html' %}{% block title %}Add{% endblock %}{% block content %}
 
-<di class="add-data">
-    <form method="POST" class="form-group">
+<div id="add-data">
+    <form method="POST">
         {% csrf_token %}
-        <table id="add-form">
+        <table>
             {% for field in exp_form %}
             <tr>
                 <th>{{field.label_tag}}</th>
                 <td>
                     {{ field.errors }} {{ field }}{% if forloop.counter == 1 %}
-                    <a href="{% url 'category' %}"><i id="catg-add"  class="fas fa-plus"></i></a>{% endif %}
+                    <a title="Add new category" href="{% url 'category' %}"><i id="catg-add"  class="fas fa-plus"></i></a>{% endif %}
                 </td>
-            </tr>
-            {% endfor %}
+            </tr> {% endfor %}
         </table>
-        <input class="add-btn" type="submit" name="" value="Submit">
+        <input id="add-subm" class="btn btn-primary" type="submit" value="Submit">
     </form>
-</di>
+</div>
 {% endblock %}

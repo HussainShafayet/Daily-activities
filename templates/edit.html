@@ -1,10 +1,13 @@
 {% extends 'base.html' %} {% block title %}Edit{% endblock %}{% block content %}
-
-<div class="container">
+<div id="edit-form">
     <form action="" method="POST">
+        {% csrf_token %}
+        <table>{{form.as_table}}</table>
 
-        {% csrf_token %} {{form}}
-        <input type="submit" name="" id="" value="Submit">
+        <div id="edit-btn">
+            <input class="btn btn-primary" type="submit" name="" value="Save">
+            <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'data' %}">Cansel</a>
+        </div>
     </form>
 </div>
 {% endblock %}

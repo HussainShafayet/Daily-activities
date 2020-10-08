@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('.data_del').on('click', function() {
+    $('.btn-danger').on('click', function() {
         return confirm('Are you sure?');
     });
     $('#icon').click(function() {
@@ -14,4 +14,5 @@ $(document).ready(function() {
             width: 'toggle'
         }, 1000);
     });
+
 });

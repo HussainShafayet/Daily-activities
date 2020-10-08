@@ -1,13 +1,17 @@
-{% extends 'base.html' %}{% block title %}LogIn{% endblock %}{% block content %}
+{% extends 'base.html' %}{% load crispy_forms_tags %}{% block title %}LogIn{% endblock %}{% block content %}
 
 <div class="div_login">
     <h1>Login Here</h1>
-    <form action="" method="POST" class="login">
-        {% csrf_token %} {{log_form}} {% if error %}
+    <form action="" method="POST">
+        {% csrf_token %} {{log_form}}{% if error %}
         <p class="text-danger">{{error}}</p>
         {% endif %}
-        <input type="submit" value="Login">
+        <small id="forgot-pass">
+            <a href="">Forgot password? </a>
+        </small>
+        <input id="log-btn" type="submit" class="btn btn-primary" value="Login">
 
     </form>
+    <p id="reg-log">Don't have an account? <a href="{% url 'register' %}">Registration here</a></p>
 </div>
 {% endblock %}
