@@ -10,7 +10,7 @@
                 <option value="{{catg.category}}" {% if catg.category == cat %} selected {% endif %}>{{catg.category}}</option>
                 {% endfor %}
             </select>
-            <input type="submit" name='' value="Search">
+            <input type="submit" id='search-btn' class="btn btn-primary" value="Search">
         </form>
     </div>
     <div><i id='show-icon' class="fas fa-angle-double-right fa-2x"></i></div>

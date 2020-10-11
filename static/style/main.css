@@ -124,19 +124,12 @@ nav #prof .pro {
     align-items: center;
 }
 
-#add-data label {
+#add-data .label {
     color: rgb(13, 184, 206);
     font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: end;
-}
-
-#add-data table tr,
-label {
-    justify-content: center;
-    align-items: center;
-    margin: 12px;
 }
 
 #add-data input[type='text'],
@@ -163,6 +156,9 @@ select:focus {
     margin-top: 10px;
 }
 
+
+/* Category Add */
+
 #add-catg {
     background-color: darkslategray;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -174,12 +170,26 @@ select:focus {
     align-items: center;
 }
 
-#add-catg label {
+#add-catg tr,
+.lab {
     color: rgb(13, 184, 206);
     font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: end;
+    margin-right: 5px;
+}
+
+#add-catg input[type='text'] {
+    border: 2px solid rgb(51, 153, 76);
+    border-radius: 4px;
+    width: 200px;
+    height: 40px;
+    padding: 6px 10px;
+}
+
+#add-catg input[type='text']:focus {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 #catg-btn {
@@ -194,7 +204,7 @@ select:focus {
 }
 
 
-/* table degin*/
+/* Table Design */
 
 #div-tab {
     margin-top: 10px;
@@ -207,29 +217,12 @@ select:focus {
     height: 40px;
 }
 
-#show-catg {
+#search-btn {
     height: 40px;
 }
 
-#show-btn input[type='submit'] {
-    background-color: darkgray;
-    color: black;
-    font-size: 16px;
-    padding: 6px 10px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    text-align: center;
-}
-
-#show-btn input[type='submit']:hover {
-    background-color: black;
-    color: white;
-    transition: 0.5s;
-    -webkit-transition: 0.5s;
-    -moz-transition: 0.5s;
-    -ms-transition: 0.5s;
-    -o-transition: 0.5s;
+#show-catg {
+    height: 40px;
 }
 
 #show-icon {
@@ -278,7 +271,7 @@ select:focus {
 }
 
 
-/* Edit form */
+/* Edit Form */
 
 #edit-form {
     width: 500px;
@@ -290,25 +283,24 @@ select:focus {
     background-color: darkseagreen;
 }
 
-#data-form tr th,
-label {
-    display: flex;
-    justify-content: end;
-    align-items: center;
-    margin-right: 5px;
-}
-
-#data-form tr,
-label {
+#edit-form tr,
+.label {
     color: rgb(155, 59, 233);
     font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: end;
+    margin-right: 5px;
 }
 
-#data-form select,
-input[type='text'],
+#edit-form th,
+.label {
+    align-items: center;
+    margin: 8px;
+}
+
+#edit-form select,
+.inp input[type='text'],
 input[type='number'] {
     border: 2px solid rgb(51, 153, 76);
     border-radius: 4px;
@@ -317,23 +309,29 @@ input[type='number'] {
     padding: 6px 10px;
 }
 
+#edit-form input[type='text']:focus,
+input[type='number']:focus,
+select:focus {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 #edit-btn {
     text-align: center;
     margin-top: 10px;
 }
 
 
-/* login page design */
+/* Login page */
 
-.div_login {
+#div_login {
     width: 500px;
     margin: 0 auto;
     margin-top: 50px;
     text-align: center;
 }
 
-.div_login input[type="text"],
-.div_login input[type="password"] {
+#div_login input[type="text"],
+#div_login input[type="password"] {
     border: 0;
     background: none;
     display: block;
@@ -349,25 +347,26 @@ input[type='number'] {
     height: 45px;
 }
 
-.div_login input[type="text"]:focus,
-.div_login input[type="password"]:focus {
+#div_login input[type="text"]:focus,
+#div_login input[type="password"]:focus {
     width: 380px;
     border-color: #2ecc71;
     font-size: 18px;
 }
 
 #log-btn {
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 #forgot-pass a {
+    margin-top: 5px;
     text-decoration: none;
     display: flex;
     justify-content: space-around;
 }
 
 
-/* register page*/
+/*Registration*/
 
 #reg-header {
     color: #2ecc71;
@@ -387,6 +386,66 @@ input[type='number'] {
 
 #reg-log a {
     text-decoration: none;
+}
+
+.text-muted ul {
+    margin-left: 30px;
+}
+
+
+/* Profile */
+
+#pro-dashboard {
+    width: 800px;
+    height: 600px;
+    margin: 0px auto;
+    margin-top: 100px;
+    position: relative;
+    border: 1px solid darkgray;
+}
+
+#pro-header {
+    width: 100%;
+    height: 100px;
+    position: absolute;
+    background-color: #2ecc71;
+}
+
+#pro-img {
+    width: 150px;
+    height: 150px;
+    border: 2px solid goldenrod;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+
+#pro-info {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#pro-info th {
+    display: flex;
+    justify-content: end;
 }
 
 

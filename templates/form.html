@@ -6,7 +6,7 @@
         <table>
             {% for field in exp_form %}
             <tr>
-                <th>{{field.label_tag}}</th>
+                <th class="label">{{field.label_tag}}</th>
                 <td>
                     {{ field.errors }} {{ field }}{% if forloop.counter == 1 %}
                     <a title="Add new category" href="{% url 'category' %}"><i id="catg-add"  class="fas fa-plus"></i></a>{% endif %}

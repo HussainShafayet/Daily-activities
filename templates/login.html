@@ -1,6 +1,6 @@
 {% extends 'base.html' %}{% load crispy_forms_tags %}{% block title %}LogIn{% endblock %}{% block content %}
 
-<div class="div_login">
+<div id="div_login">
     <h1>Login Here</h1>
     <form action="" method="POST">
         {% csrf_token %} {{log_form}}{% if error %}

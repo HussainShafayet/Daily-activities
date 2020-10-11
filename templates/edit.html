@@ -2,7 +2,14 @@
 <div id="edit-form">
     <form action="" method="POST">
         {% csrf_token %}
-        <table>{{form.as_table}}</table>
+        <table> {% for field in form %}
+
+            <tr>
+                <th class="label">{{field.label_tag}}</th>
+                <td class="inp">{{field}}</td>
+            </tr>
+            {% endfor %}
+        </table>
 
         <div id="edit-btn">
             <input class="btn btn-primary" type="submit" name="" value="Save">

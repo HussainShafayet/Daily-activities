@@ -1,9 +1,9 @@
 from django import forms
 from .import models
 from django.forms import ModelForm
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm,UserChangeForm
 from django.contrib.auth.models import User
-from .models import Expenses,Category
+from .models import Expenses,Category,Profile
 
 class MyExpenses(forms.ModelForm):
     class Meta:
@@ -64,10 +64,21 @@ class Register(UserCreationForm):
             'placeholder': 'Confirm password'
         })
 
-        
-
-
 class UserLoginForm(forms.Form):
     username = forms.CharField()
     password=forms.CharField(widget=forms.PasswordInput)
     
+class UserProfileForm(UserChangeForm):
+    password=None
+    class Meta:
+        model = User
+
+        fields = [
+            'first_name','last_name','email'
+        ]
+class ProfileForm(forms.ModelForm): 
+    class Meta:
+        model = Profile
+        fields = [
+            'image'
+        ]

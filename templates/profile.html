@@ -1,0 +1,26 @@
+{% extends 'base.html' %}{% load static %}{% block title %}Profile{% endblock %}{% block content %}
+<div id="pro-dashboard">
+    <div id="pro-header"></div>
+    <div id="pro-img">
+        <img src="{{user.profile.image.url }}" alt="image" width="50%" height="50%">
+
+    </div>
+    <div id="pro-info">
+        <table>
+            <tr>
+                <th>Name: </th>
+                <td>{{user.first_name}}{{user.last_name}}</td>
+            </tr>
+            <tr>
+                <th>Username: </th>
+                <td>{{user.username}}</td>
+            </tr>
+            <tr>
+                <th>Email: </th>
+                <td>{{user.email}}</td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
-from .models import Expenses, Category, User
-from .forms import MyExpenses, Register, UserLoginForm,Add_category
+from .models import Expenses, Category,Profile, User
+from .forms import MyExpenses, Register, UserLoginForm,Add_category,UserProfileForm,ProfileForm
 from django.contrib.auth import authenticate, login, logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 
 
 
@@ -21,7 +22,7 @@ def register(request):
                     return render(request,'register.html',{'user_form':user_form})
             user_form.save() 
             messages.success(request, 'Registration Successful')
-            return redirect('login')        
+            return redirect('login')       
     else:
        
         user_form = Register()
@@ -52,6 +53,8 @@ def user_login(request):
         log_form = UserLoginForm()
         contex = {'log_form': log_form}
     return render(request, 'login.html', contex)
+
+
 
 def logout(request):
     django_logout(request)
@@ -159,7 +162,7 @@ def show_catg(request):
     cur_user = request.user
     catgs = Category.objects.filter(user=cur_user)
     return render(request, 'data.html', {'catgs': catgs})
-
+@login_required(login_url='login')
 def edit(request, id):
     expense = Expenses.objects.get(id=id)
     if request.method == 'POST':
@@ -174,8 +177,29 @@ def edit(request, id):
             'form':form
         }
     return render(request, 'edit.html', contex)
-    
+@login_required(login_url='login')  
 def delete(request, id):
     expense = Expenses.objects.get(id=id)
     expense.delete()
     return redirect('data')
+@login_required(login_url='login')
+def profile(request):
+    if request.method == 'POST':
+        pro_form = ProfileForm(request.POST, request.FILES or None)
+        
+        print(5)
+        if pro_form.is_valid():
+            pro = Profile()
+            pro.user = request.user
+            pro.image=pro_form.cleaned_data['image']
+            #pro.file=pro_form.cleaned_data['file']
+            pro.save()
+            return redirect('profile')
+    else:
+        ed = Profile.objects.get(user=request.user)
+        print(ed)
+        print(5)
+        #edit = Profile(instance=ed)
+        #print(edit)
+        pro_form=ProfileForm()
+    return render(request,'profile.html',{'pro_form':pro_form,'edit':ed})
