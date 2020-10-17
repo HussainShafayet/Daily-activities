@@ -6,5 +6,14 @@
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
+    
+    .alert-success {
+        top: 55px;
+    }
 </style>
-{% endblock %} {% block content %} {% endblock %}
+{% endblock %} {% block content %} {% if messages %} {% for message in messages %}
+<div class="alert alert-success" role="alert">
+    <button type="button" class="close" data-dismiss="alert">X</button> {{message}}
+</div>
+
+{% endfor %} {% endif %}{% endblock %}

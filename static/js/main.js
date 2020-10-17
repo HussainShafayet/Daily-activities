@@ -17,5 +17,11 @@ $(document).ready(function() {
             width: 'toggle',
         }, 1000);
     });
+    $('.close').click(function() {
+        $('.alert-success').css({
+            'display': 'none'
+        });
+    });
+
 
 });

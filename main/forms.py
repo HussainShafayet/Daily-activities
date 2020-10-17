@@ -1,9 +1,10 @@
 from django import forms
 from .import models
 from django.forms import ModelForm
-from django.contrib.auth.forms import UserCreationForm,UserChangeForm
+from django.contrib.auth.forms import UserCreationForm,UserChangeForm,PasswordChangeForm
 from django.contrib.auth.models import User
-from .models import Expenses,Category,Profile
+from .models import Expenses, Category, Profile
+from django.core.validators import validate_email
 
 class MyExpenses(forms.ModelForm):
     class Meta:
@@ -63,19 +64,46 @@ class Register(UserCreationForm):
         self.fields['password2'].widget.attrs.update({
             'placeholder': 'Confirm password'
         })
-
+    
+    def clean(self):
+        cleaned_data = super(Register, self).clean()
+        email = cleaned_data.get("email")
+        
+        if User.objects.filter(email=email):
+            raise forms.ValidationError('Email already exists.')
+        return self.cleaned_data
+    
 class UserLoginForm(forms.Form):
     username = forms.CharField()
     password=forms.CharField(widget=forms.PasswordInput)
     
 class UserProfileForm(UserChangeForm):
-    password=None
+    password = None
     class Meta:
         model = User
 
         fields = [
-            'first_name','last_name','email'
+            'first_name','last_name','username','email'
         ]
+
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+
+        self.fields['first_name'].widget.attrs.update({
+            'autofocus': True,
+            'required': True,
+        })
+        self.fields['last_name'].widget.attrs.update({
+            'required': True,
+        })
+        self.fields['username'].widget.attrs.update({
+            'placeholder': 'username',
+            'autofocus': False
+        })
+        self.fields['email'].widget.attrs.update({
+            'required': True,
+
+        })
 class ProfileForm(forms.ModelForm): 
     class Meta:
         model = Profile

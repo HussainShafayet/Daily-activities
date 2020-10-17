@@ -1,5 +1,6 @@
 from django.urls import path, include
-from .import views
+from . import views
+from django.conf.urls import url
 
 urlpatterns = [
     path('', views.main, name='main'),
@@ -10,9 +11,13 @@ urlpatterns = [
     path('category/',views.add_category,name='category'),
     path('register/', views.register, name='register'),
     path('login/', views.user_login, name='login'),
-    path('profile/',views.profile,name='profile'),
-    path('logout/', views.logout, name='logout'),
+    path('profile/', views.profile, name='profile'),
+    path('profile/edit-profile',views.edit_profile,name='edit-profile'),
+    path('profile/change-password',views.password_change,name='password'),
+    path('logout/', views.user_logout, name='logout'),
     path('edit/<int:id>',views.edit,name='edit'),
     path('delete/<int:id>', views.delete, name='delete'),
+    path('activate/<uidb64>/<token>/',
+        views.activate, name='activate'),
 
 ]

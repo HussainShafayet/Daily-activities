@@ -395,7 +395,7 @@ select:focus {
 
 /* Profile */
 
-#pro-dashboard {
+.pro-dashboard {
     width: 800px;
     height: 600px;
     margin: 0px auto;
@@ -404,14 +404,14 @@ select:focus {
     border: 1px solid darkgray;
 }
 
-#pro-header {
+.pro-header {
     width: 100%;
     height: 100px;
     position: absolute;
     background-color: #2ecc71;
 }
 
-#pro-img {
+.pro-img {
     width: 150px;
     height: 150px;
     border: 2px solid goldenrod;
@@ -433,19 +433,89 @@ select:focus {
     -o-border-radius: 50%;
 }
 
-#pro-info {
-    position: absolute;
-    top: 100px;
-    width: 100%;
-    height: 500px;
+.pro-value {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: darkcyan;
+    top: 140px;
 }
 
-#pro-info th {
+.pro-value table {
+    width: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+}
+
+.pro-info tr th {
     display: flex;
     justify-content: end;
+    margin-right: 10px;
+    color: #3498db;
+    font-size: 1.2em;
+}
+
+.pro-info tr td {
+    font-size: 1em;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.but-div {
+    width: 100%;
+    background-color: cadetblue;
+    position: absolute;
+    height: 40px;
+    top: 100px;
+    display: flex;
+}
+
+.but-div a {
+    color: black;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    text-decoration: none;
+    padding: 5px;
+}
+
+.but-div a:hover {
+    background-color: aquamarine;
+    transition: 1s;
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    -ms-transition: 1s;
+    -o-transition: 1s;
+}
+
+.pro-edtform {
+    position: absolute;
+    left: 50%;
+    top: 80%;
+    transform: translate(-50%, -80%);
+    -webkit-transform: translate(-50%, -80%);
+    -moz-transform: translate(-50%, -80%);
+    -ms-transform: translate(-50%, -80%);
+    -o-transform: translate(-50%, -80%);
+}
+
+.alert-success {
+    position: absolute;
+    width: 100%;
+    top: 140px;
+    left: 50%;
+    transform: translate(-50%);
+    -webkit-transform: translate(-50%);
+    -moz-transform: translate(-50%);
+    -ms-transform: translate(-50%);
+    -o-transform: translate(-50%);
 }
 
 

@@ -1,11 +1,18 @@
 from django.shortcuts import render,redirect
 from .models import Expenses, Category,Profile, User
-from .forms import MyExpenses, Register, UserLoginForm,Add_category,UserProfileForm,ProfileForm
-from django.contrib.auth import authenticate, login, logout as django_logout
+from .forms import MyExpenses, Register, UserLoginForm, Add_category, UserProfileForm,ProfileForm
+from django.contrib.auth.views import PasswordChangeForm
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_text
+from .tokens import account_activation_token
+from django.core.mail import EmailMessage
 
 
 
@@ -14,15 +21,23 @@ def register(request):
     if request.method == "POST":
         user_form = Register(request.POST)
         if user_form.is_valid():
-            all_email = User.objects.values_list('email',flat=True)
-            user_email = user_form.cleaned_data['email']
-            for i in all_email:
-                if i == user_email:
-                    messages.error(request,'Email Already added')
-                    return render(request,'register.html',{'user_form':user_form})
-            user_form.save() 
-            messages.success(request, 'Registration Successful')
-            return redirect('login')       
+            user = user_form.save(commit=False)
+            user.is_active = False
+            user.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your blog account.'
+            message = render_to_string('acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            to_email = user_form.cleaned_data.get('email')
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+            return HttpResponse('Please confirm your email address to complete the registration')
     else:
        
         user_form = Register()
@@ -31,6 +46,21 @@ def register(request):
             }
     return render(request, 'register.html',contex)
 
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        # return redirect('home')
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')
 
 def user_login(request):
     if request.method == 'POST':
@@ -41,8 +71,10 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
+                messages.success(request, 'Login Successfully')
                 return redirect('/')
             else:
+                messages.error(request,'Try again')
                 contex = {
                     'log_form':UserLoginForm(),
                     'error': 'Username or Password Incorrect'
@@ -56,8 +88,9 @@ def user_login(request):
 
 
 
-def logout(request):
-    django_logout(request)
+def user_logout(request):
+    logout(request)
+    messages.warning(request,'You are logged out')
     return redirect('main')
 
 
@@ -186,8 +219,6 @@ def delete(request, id):
 def profile(request):
     if request.method == 'POST':
         pro_form = ProfileForm(request.POST, request.FILES or None)
-        
-        print(5)
         if pro_form.is_valid():
             pro = Profile()
             pro.user = request.user
@@ -196,10 +227,34 @@ def profile(request):
             pro.save()
             return redirect('profile')
     else:
-        ed = Profile.objects.get(user=request.user)
-        print(ed)
-        print(5)
-        #edit = Profile(instance=ed)
-        #print(edit)
         pro_form=ProfileForm()
-    return render(request,'profile.html',{'pro_form':pro_form,'edit':ed})
+    return render(request, 'profile.html', {'pro_form': pro_form})
+
+
+@login_required(login_url='login')
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST,instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile update success')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Try again')
+            return redirect('edit-profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+    return render(request,'profile-edit.html',{'form':form})
+def password_change(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(data=request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Password change successfully!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Try again')
+            return redirect('password')
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render(request, 'change-password.html', {'form': form})
