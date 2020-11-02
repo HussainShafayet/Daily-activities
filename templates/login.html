@@ -7,7 +7,7 @@
         <p class="text-danger">{{error}}</p>
         {% endif %}
         <small id="forgot-pass">
-            <a href="">Forgot password? </a>
+            <a href="{% url 'password_reset' %}">Forgot password? </a>
         </small>
         <input id="log-btn" type="submit" class="btn btn-primary" value="Login">
 

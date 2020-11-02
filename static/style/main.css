@@ -12,7 +12,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 55px;
+    height: auto;
 }
 
 nav #logo {
@@ -274,8 +274,8 @@ select:focus {
 /* Edit Form */
 
 #edit-form {
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: 400px;
     margin: 50px auto;
     display: flex;
     justify-content: center;
@@ -526,6 +526,20 @@ select:focus {
         background-color: #3498db;
         flex-direction: column;
     }
+    nav #logo {
+        font-family: 'Times New Roman', Times, serif;
+        background-color: darkgray;
+        width: 100%;
+    }
+    nav #prof {
+        background-color: darksalmon;
+        width: 100%;
+    }
+    nav #prof ul {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
     nav ul {
         flex-direction: column;
     }
@@ -534,7 +548,7 @@ select:focus {
         width: 100%;
     }
     #tab1 {
-        width: 100%;
+        overflow-y: scroll;
     }
 }
 

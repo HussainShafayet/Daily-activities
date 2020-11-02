@@ -22,7 +22,7 @@
             <li class="items">
                 <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
             </li>
-            <li class="items"> <a href="{% url 'about' %}"><i class="fas fa-add"></i> About</a> </li>
+            <li class="items"> <a href="{% url 'about' %}"><i class="fas fa-add"></i>About </a> </li>
             <li class="items">
                 <a id="ad" href="{% url 'add' %}"><i class="fas fa-plus-circle"></i> Add</a>
             </li>
@@ -33,8 +33,10 @@
         <div id="prof">
             <ul>
                 {% if user.is_authenticated %}
-                <li class="pro">Hello {{user.username}}</li>
+                <li class="pro">Welcome, {{user.first_name}}</li>
+
                 <li class="pro"><i id="icon" class="far fa-user-circle "></i></li>{% else %}
+
                 <li> <a href="{% url 'register'%}">sign up</a> </li>
                 <li> <a href="{% url 'login' %}">login</a> </li>{% endif %}
             </ul>

@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from .models import Expenses, Category,Profile, User
 from .forms import MyExpenses, Register, UserLoginForm, Add_category, UserProfileForm,ProfileForm
-from django.contrib.auth.views import PasswordChangeForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.views import PasswordChangeForm,PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
+from django.contrib.auth import authenticate, login, logout,update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.contrib import messages
@@ -13,6 +13,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 
@@ -38,13 +39,14 @@ def register(request):
             )
             email.send()
             return HttpResponse('Please confirm your email address to complete the registration')
+        
     else:
        
         user_form = Register()
-    contex = {
+    context = {
             'user_form': user_form
             }
-    return render(request, 'register.html',contex)
+    return render(request, 'register.html',context)
 
 
 def activate(request, uidb64, token):
@@ -75,16 +77,16 @@ def user_login(request):
                 return redirect('/')
             else:
                 messages.error(request,'Try again')
-                contex = {
+                context = {
                     'log_form':UserLoginForm(),
                     'error': 'Username or Password Incorrect'
                     
                 }
-                return render(request,'login.html',contex)
+                return render(request,'login.html',context)
     else:
         log_form = UserLoginForm()
-        contex = {'log_form': log_form}
-    return render(request, 'login.html', contex)
+        context = {'log_form': log_form}
+    return render(request, 'login.html', context)
 
 
 
@@ -158,10 +160,10 @@ def form(request):
     else:
         exp_form = MyExpenses(request.user)
         exp_form.user=request.user
-        contex = {
+        context = {
             'exp_form':exp_form
         }
-    return render(request, 'form.html', contex)
+    return render(request, 'form.html', context)
 
 
 @login_required(login_url='login')
@@ -175,19 +177,19 @@ def add_category(request):
             cat.category = category.cleaned_data['category']
             for i in all_cat:
                 if i.category == cat.category and i.user == request.user:
-                    contex = {
+                    context = {
                         'category': Add_category(),
                         'error':'This category already added!'
                     }
-                    return render(request, 'category.html', contex)
+                    return render(request, 'category.html', context)
             cat.save()
             return redirect('add')
     else:
         category = Add_category()
-        contex = {
+        context = {
             'category': category
         }
-    return render(request, 'category.html', contex)
+    return render(request, 'category.html', context)
 
 
 @login_required(login_url='login')
@@ -206,10 +208,10 @@ def edit(request, id):
         return redirect('data')
     else:
         form = MyExpenses(instance=expense, user=request.user)
-        contex = {
+        context = {
             'form':form
         }
-    return render(request, 'edit.html', contex)
+    return render(request, 'edit.html', context)
 @login_required(login_url='login')  
 def delete(request, id):
     expense = Expenses.objects.get(id=id)
@@ -244,13 +246,16 @@ def edit_profile(request):
             return redirect('edit-profile')
     else:
         form = UserProfileForm(instance=request.user)
-    return render(request,'profile-edit.html',{'form':form})
+    return render(request, 'profile-edit.html', {'form': form})
+    
+@login_required(login_url='login')
 def password_change(request):
     if request.method == 'POST':
         form = PasswordChangeForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Password change successfully!')
+            update_session_auth_hash(request, form.user)
             return redirect('profile')
         else:
             messages.error(request, 'Try again')
@@ -258,3 +263,17 @@ def password_change(request):
     else:
         form = PasswordChangeForm(user=request.user)
     return render(request, 'change-password.html', {'form': form})
+
+class ResetPassword(UserPassesTestMixin,PasswordResetView):
+    template_name = 'password_reset.html'
+    
+    def test_func(self):
+        return self.request.user.is_anonymous
+
+class ResetPasswordDone(PasswordResetDoneView):
+    template_name = 'password_reset_done.html'
+
+class ResetPasswordConfirm(PasswordResetConfirmView):
+    template_name = 'password_reset_confirm.html'
+class ResetPasswordComplete(PasswordResetCompleteView):
+    template_name = 'password_reset_complete.html'

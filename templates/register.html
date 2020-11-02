@@ -17,7 +17,17 @@
             {% endif %}
         </div>
         <form action="" method="POST">
-            {% csrf_token %} {{user_form|crispy}}
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-6">
+                    {{user_form.first_name|as_crispy_field}}
+                </div>
+                <div class="col-6">
+                    {{user_form.last_name|as_crispy_field}}
+                </div>
+            </div>
+
+            {{user_form.username|as_crispy_field}} {{user_form.email|as_crispy_field}} {{user_form.password1|as_crispy_field}}{{user_form.password2|as_crispy_field}}
             <button id="reg-subm" type="submit" class="btn btn-success">Submit</button>
         </form>
         <p id="reg-log">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
