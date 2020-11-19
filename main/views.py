@@ -14,10 +14,12 @@ from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 from django.contrib.auth.mixins import UserPassesTestMixin
-
+from Daily_activities.settings import EMAIL_HOST_USER,EMAIL_HOST_PASSWORD
 
 
 # Create your views here.
+
+
 def register(request):
     if request.method == "POST":
         user_form = Register(request.POST)
@@ -264,7 +266,7 @@ def password_change(request):
         form = PasswordChangeForm(user=request.user)
     return render(request, 'change-password.html', {'form': form})
 
-class ResetPassword(UserPassesTestMixin,PasswordResetView):
+class ResetPassword(UserPassesTestMixin, PasswordResetView):
     template_name = 'password_reset.html'
     
     def test_func(self):

@@ -15,7 +15,7 @@
     </div>
     <div><i id='show-icon' class="fas fa-angle-double-right fa-2x"></i></div>
 </div>
-
+{% if exps %}
 <div id="div-tab">
     <table id="tab1">
         <h1 style="text-align: center;">My Expenses</h1>
@@ -52,4 +52,6 @@
         </tbody>
     </table>
 </div>
-{% endblock %}
+{% else %}
+<p style="color: red;font-size:large">No value</p>
+{% endif %}{% endblock %}
