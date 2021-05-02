@@ -1,57 +1,188 @@
-{% extends 'base.html' %} {% block title %}Expenses{% endblock %}{% block content %}
-<div id="show-btn">
-    <div id='show-catg'>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <select name="categ" id="">
+{% extends 'base.html' %} {% block title %}Expenses{% endblock %} {% block style %}
+<style>
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+    
+    table caption {
+        font-size: 1.5em;
+        margin: .5em 0 .75em;
+    }
+    
+    table tr {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: .35em;
+    }
+    
+    table th,
+    table td {
+        padding: .625em;
+        text-align: center;
+    }
+    
+    table th {
+        font-size: .85em;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+    
+    .table td,
+    .table th {
+        padding: .75rem;
+        vertical-align: top;
+        border-top: 0px solid #DEE2E7;
+    }
+    
+    @media screen and (max-width: 600px) {
+        table {
+            border: 0;
+        }
+        table caption {
+            font-size: 1.3em;
+        }
+        table thead {
+            border: none;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+        table tr {
+            border-bottom: 3px solid #ddd;
+            display: block;
+            margin-bottom: .625em;
+        }
+        table td {
+            border-bottom: 1px solid #ddd;
+            display: block;
+            font-size: .8em;
+            text-align: right;
+        }
+        table td::before {
+            /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        table td:last-child {
+            border-bottom: 0;
+        }
+    }
+</style>
+{% endblock %} {% block content %}
+<div class="container">
+    <!-- <div id="show-btn">
+        <div id='show-catg'>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <select name="categ" id="">
                 <option value="">--Select category--</option>
                 <option value="All" {% if 'All' == cat %} selected {% endif %}>All</option>
                 {% for catg in catgs %}
                 <option value="{{catg.category}}" {% if catg.category == cat %} selected {% endif %}>{{catg.category}}</option>
                 {% endfor %}
             </select>
-            <input type="submit" id='search-btn' class="btn btn-primary" value="Search">
-        </form>
+                <input type="submit" id='search-btn' class="btn btn-primary" value="Search">
+            </form>
+        </div>
+        <div><i id='show-icon' class="fas fa-angle-double-right fa-2x"></i></div>
+    </div> -->
+    {% if exps %}
+    <div class="m-3">
+        <!-- <h3 class="text-center">My Expenses
+            <hr>
+        </h3>
+        <table class=" table table-hover">
+            <thead class="thead bg-info">
+                <tr class="text-center">
+                    <th scope="col">No</th>
+                    <th scope="col">Date/Time</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Purpose</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Actions</th>
+                </tr>
+
+            </thead>
+            <tbody class="tobody">
+                {% for exp in exps %}
+                <tr class="text-center">
+                    <td scope="">{{forloop.counter}}</td>
+                    <td>{{exp.date}}</td>
+                    <td>{{exp.category}}</td>
+                    <td>{{exp.purpose}}</td>
+                    <td style="text-align: center;">{{exp.amount}}</td>
+                    <td><a href="{% url 'edit' exp.id %}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{% url 'delete' exp.id %}" class="btn btn-warning btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4 " style="text-align: center;font-size:large;font-weight:bold;">Total Expenses </td>
+                    <td style="font-weight: bold;text-align:center ">{{total_exps.amount__sum}}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table> -->
+        <h3 class="text-center">My Expenses
+            <hr>
+        </h3>
+        <div style="margin-bottom: 15px;">
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+        <table class="table table-hover">
+            <thead class="thead">
+                <tr class="bg-info">
+                    <th scope="col">No</th>
+                    <th scope="col">Date/Time</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Purpose</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="tobdy">
+                {% for exp in exps %}
+                <tr>
+                    <td scope="row" data-label="No">{{forloop.counter}}</td>
+                    <td data-label="Date/Time">{{exp.date}}</td>
+                    <td data-label="Category">{{exp.category}}</td>
+                    <td data-label="Purpose">{{exp.purpose}}</td>
+                    <td data-label="Amount">{{exp.amount}}</td>
+                    <td data-label="Actions">
+                        <a href="{% url 'edit' exp.id %}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{% url 'delete' exp.id %}" class="btn btn-warning btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4 " style="text-align: center;font-size:large;font-weight:bold;">Total Expenses </td>
+                    <td style="font-weight: bold;text-align:center ">{{total_exps.amount__sum}}</td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+
     </div>
-    <div><i id='show-icon' class="fas fa-angle-double-right fa-2x"></i></div>
+    {% else %}
+    <p style="color: red;font-size:large ">No value</p>
+    {% endif %}
 </div>
-{% if exps %}
-<div id="div-tab">
-    <table id="tab1">
-        <h1 style="text-align: center;">My Expenses</h1>
-
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Date/Time</th>
-                <th>Category</th>
-                <th>Purpose</th>
-                <th>Amount</th>
-                <th>Actions</th>
-            </tr>
-
-        </thead>
-        <tbody>
-            {% for exp in exps %}
-            <tr>
-                <td>{{forloop.counter}}</td>
-                <td>{{exp.date}}</td>
-                <td>{{exp.category}}</td>
-                <td>{{exp.purpose}}</td>
-                <td style="text-align: center;">{{exp.amount}}</td>
-                <td><a href="{% url 'edit' exp.id %}" class="btn btn-primary">Edit</a>
-                    <a href="{% url 'delete' exp.id %}" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="4" style="text-align: center;font-size:large">Total Expenses </td>
-                <td style="font-weight: bold;text-align:center">{{total_exps.amount__sum}}</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-{% else %}
-<p style="color: red;font-size:large">No value</p>
-{% endif %}{% endblock %}
+{% endblock %}

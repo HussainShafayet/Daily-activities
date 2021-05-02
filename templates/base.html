@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"> -->
+    <link rel="stylesheet" type="text/css" href="/media/bootstrap/css/bootstrap.min.css.map" media="all">
+    <link rel="stylesheet" type="text/css" href="/media/bootstrap/css/bootstrap.min.css" media="all">
+
     <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
     <link rel="stylesheet" href="{% static 'style/main.css' %}" type="text/css">{% block style %}{% endblock %}
 </head>
@@ -42,7 +45,7 @@
             </ul>
         </div>
     </nav>
-    <div id="side-menu'>
+    <div id="side-menu">
 
         <ul>
             <li><a href=" {% url 'profile' %} ">profile</a></li>
@@ -53,9 +56,15 @@
     </div>
     {% block content %}{% endblock %}
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js "></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js "></script> -->
+    <!-- <script src="https://kit.fontawesome.com/bf12ee2437.js " crossorigin="anonymous "></script> -->
+    <script type="text/javascript" src="/media/bootstrap/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="/media/bootstrap/js/bf12ee2437.js"></script>
+    <script type="text/javascript" src="/media/bootstrap/js/popper.min.js"></script>
+    <script type="text/javascript" type="text/javascript" src="/media/bootstrap/js/bootstrap.min.js"></script>
+    {% block js_script %}{% endblock %}
     <script src="{% static 'js/main.js ' %} "></script>
-    <script src="https://kit.fontawesome.com/bf12ee2437.js " crossorigin="anonymous "></script>
+
 </body>
 
 </html>

@@ -1,8 +1,10 @@
-{% extends 'base.html' %} {% block title %}Edit{% endblock %}{% block content %}
-<div id="edit-form">
+{% extends 'base.html' %}{% load crispy_forms_tags %} {% block title %}Edit{% endblock %}
+{% block content %}
+<div class="container">
+    <div id="edit-form">
     <form action="" method="POST">
         {% csrf_token %}
-        <table> {% for field in form %}
+        <!-- <table> {% for field in form %}
 
             <tr>
                 <th class="label">{{field.label_tag}}</th>
@@ -10,11 +12,13 @@
             </tr>
             {% endfor %}
         </table>
-
+ -->
+        {{form|crispy}}
         <div id="edit-btn">
             <input class="btn btn-primary" type="submit" name="" value="Save">
             <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'data' %}">Cansel</a>
         </div>
     </form>
+    </div>
 </div>
 {% endblock %}
