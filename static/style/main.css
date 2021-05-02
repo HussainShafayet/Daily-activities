@@ -518,6 +518,16 @@ select:focus {
     -o-transform: translate(-50%);
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    appearance: textfield;
+}
+
 
 /* Extra small devices (phones, 600px and down) */
 
