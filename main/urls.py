@@ -1,13 +1,15 @@
 from django.urls import path, include
 from . import views
 from django.conf.urls import url
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('', views.main, name='main'),
     path('about/', views.about, name='about'),
     path('data/', views.data, name='data'),
     path('add/', views.form, name='add'),
-    path('show/',views.show_catg,name='show'),
+    path('show/', views.show_catg, name='show'),
+    path('search_item/', csrf_exempt(views.search_item), name='search'),
     path('category/',views.add_category,name='category'),
     path('register/', views.register, name='register'),
     path('login/', views.user_login, name='login'),

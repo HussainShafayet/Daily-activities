@@ -1,12 +1,12 @@
-from django.shortcuts import render,redirect
-from .models import Expenses, Category,Profile, User
-from .forms import MyExpenses, Register, UserLoginForm, Add_category, UserProfileForm,ProfileForm
-from django.contrib.auth.views import PasswordChangeForm,PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-from django.contrib.auth import authenticate, login, logout,update_session_auth_hash
+from django.shortcuts import render, redirect
+from .models import Expenses, Category, Profile, User
+from .forms import MyExpenses, Register, UserLoginForm, Add_category, UserProfileForm, ProfileForm
+from django.contrib.auth.views import PasswordChangeForm, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.contrib import messages
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -14,7 +14,12 @@ from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 from django.contrib.auth.mixins import UserPassesTestMixin
-from Daily_activities.settings import EMAIL_HOST_USER,EMAIL_HOST_PASSWORD
+from Daily_activities.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
+
+from django.db.models import Q
+
+import json
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -41,14 +46,14 @@ def register(request):
             )
             email.send()
             return HttpResponse('Please confirm your email address to complete the registration')
-        
+
     else:
-       
+
         user_form = Register()
     context = {
-            'user_form': user_form
-            }
-    return render(request, 'register.html',context)
+        'user_form': user_form
+    }
+    return render(request, 'register.html', context)
 
 
 def activate(request, uidb64, token):
@@ -66,6 +71,7 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
+
 def user_login(request):
     if request.method == 'POST':
         log_form = UserLoginForm(request.POST)
@@ -78,65 +84,89 @@ def user_login(request):
                 messages.success(request, 'Login Successfully')
                 return redirect('/')
             else:
-                messages.error(request,'Try again')
+                messages.error(request, 'Try again')
                 context = {
-                    'log_form':UserLoginForm(),
+                    'log_form': UserLoginForm(),
                     'error': 'Username or Password Incorrect'
-                    
+
                 }
-                return render(request,'login.html',context)
+                return render(request, 'login.html', context)
     else:
         log_form = UserLoginForm()
         context = {'log_form': log_form}
     return render(request, 'login.html', context)
 
 
-
 def user_logout(request):
     logout(request)
-    messages.warning(request,'You are logged out')
+    messages.warning(request, 'You are logged out')
     return redirect('main')
 
 
 def main(request):
     return render(request, 'main.html')
 
+
 def about(request):
-    return render(request,'about.html')
+    return render(request, 'about.html')
+
 
 @login_required(login_url='login')
 def data(request):
     current_user = request.user
     catgs = Category.objects.filter(user=current_user)
-    if request.POST.get('categ'):
-        cat = request.POST.get('categ')
-        if cat == 'All':
+    if ('search') in request.GET:
+        cat = request.GET.get('search')
+
+        if cat:
+            catgs = Category.objects.filter(user=current_user).filter(
+                Q(category__icontains=str(cat)))
+            if catgs:
+                test = []
+                for i in catgs:
+                    expen = Expenses.objects.filter(
+                        user=current_user, category=i).order_by('date')
+                    for j in expen:
+                        test.append(j)
+                amount = 0
+                for i in test:
+                    amount = amount + (i.amount)
+                val='amount'
+                context = {
+                    'cat': cat,
+                    'catgs': catgs,
+                    'total_exps': amount,
+                    'exps': test,
+                    'val':val,
+                }
+                return render(request, 'data.html', context)
+            else:
+                exps = Expenses.objects.filter(user=current_user).filter(
+                    Q(purpose__icontains=str(cat)) | Q(amount__icontains=str(cat)))
+                total_exps = exps.aggregate(Sum('amount'))
+                context = {
+                    'cat': cat,
+                    'catgs': catgs,
+                    'total_exps': total_exps,
+                    'exps': exps
+                }
+                return render(request, 'data.html', context)
+        else:
             catgs = Category.objects.filter(user=current_user)
             exps = Expenses.objects.filter(
-            user=current_user).order_by('category', 'date',)
+                user=current_user).order_by('category', 'date',)
             total_exps = exps.aggregate(Sum('amount'))
             context = {
-                'cat':cat,
                 'catgs': catgs,
                 'total_exps': total_exps,
                 'exps': exps
             }
             return render(request, 'data.html', context)
 
-        else:
-            id = Category.objects.get(user=current_user,category=cat)
-            exps = Expenses.objects.filter(user=current_user, category=id).order_by('date')
-            total_exps = exps.aggregate(Sum('amount'))
-            context = {
-                'cat':cat,
-                'catgs': catgs,
-                'total_exps': total_exps,
-                'exps': exps
-            }
-            return render(request, 'data.html', context)
     else:
         catgs = Category.objects.filter(user=current_user)
-        exps = Expenses.objects.filter(user=current_user).order_by('category','date',)
+        exps = Expenses.objects.filter(
+            user=current_user).order_by('category', 'date',)
         total_exps = exps.aggregate(Sum('amount'))
         context = {
             'catgs': catgs,
@@ -145,15 +175,34 @@ def data(request):
         }
         return render(request, 'data.html', context)
 
+def search_item(request):
+    if request.method == "POST":
+        current_user=request.user
+        search_str = json.loads(request.body).get("searchText")
+        catg = Category.objects.filter(user=current_user).filter(Q(category__icontains=str(search_str)))
+        test = []
+        for i in catg:
+            expen = Expenses.objects.filter(user=current_user, category=i).order_by('date')
+            for j in expen:
+                test.append(j)
+        amount = 0
+        print(type(expen))
+        print(expen)
+        for i in test:
+            amount = amount + (i.amount)
+        
 
+        #data = test.values()
+        #print(data)
+        return JsonResponse(expen, safe=False)
 @login_required(login_url='login')
 def form(request):
     if request.method == 'POST':
-        exp_form = MyExpenses(request.user,request.POST)
+        exp_form = MyExpenses(request.user, request.POST)
         if exp_form.is_valid():
             exp = Expenses()
             exp.user = request.user
-            exp.category=exp_form.cleaned_data['category']
+            exp.category = exp_form.cleaned_data['category']
             exp.purpose = exp_form.cleaned_data['purpose']
             exp.amount = exp_form.cleaned_data['amount']
             exp.save()
@@ -161,9 +210,9 @@ def form(request):
 
     else:
         exp_form = MyExpenses(request.user)
-        exp_form.user=request.user
+        exp_form.user = request.user
         context = {
-            'exp_form':exp_form
+            'exp_form': exp_form
         }
     return render(request, 'form.html', context)
 
@@ -181,7 +230,7 @@ def add_category(request):
                 if i.category == cat.category and i.user == request.user:
                     context = {
                         'category': Add_category(),
-                        'error':'This category already added!'
+                        'error': 'This category already added!'
                     }
                     return render(request, 'category.html', context)
             cat.save()
@@ -199,26 +248,32 @@ def show_catg(request):
     cur_user = request.user
     catgs = Category.objects.filter(user=cur_user)
     return render(request, 'data.html', {'catgs': catgs})
+
+
 @login_required(login_url='login')
 def edit(request, id):
     expense = Expenses.objects.get(id=id)
     if request.method == 'POST':
-        expense.category=Category.objects.get(id=request.POST['category'])
-        expense.purpose=request.POST['purpose']
-        expense.amount=request.POST['amount']
+        expense.category = Category.objects.get(id=request.POST['category'])
+        expense.purpose = request.POST['purpose']
+        expense.amount = request.POST['amount']
         expense.save()
         return redirect('data')
     else:
         form = MyExpenses(instance=expense, user=request.user)
         context = {
-            'form':form
+            'form': form
         }
     return render(request, 'edit.html', context)
-@login_required(login_url='login')  
+
+
+@login_required(login_url='login')
 def delete(request, id):
     expense = Expenses.objects.get(id=id)
     expense.delete()
     return redirect('data')
+
+
 @login_required(login_url='login')
 def profile(request):
     if request.method == 'POST':
@@ -226,19 +281,19 @@ def profile(request):
         if pro_form.is_valid():
             pro = Profile()
             pro.user = request.user
-            pro.image=pro_form.cleaned_data['image']
-            #pro.file=pro_form.cleaned_data['file']
+            pro.image = pro_form.cleaned_data['image']
+            # pro.file=pro_form.cleaned_data['file']
             pro.save()
             return redirect('profile')
     else:
-        pro_form=ProfileForm()
+        pro_form = ProfileForm()
     return render(request, 'profile.html', {'pro_form': pro_form})
 
 
 @login_required(login_url='login')
 def edit_profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST,instance=request.user)
+        form = UserProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile update success')
@@ -249,7 +304,8 @@ def edit_profile(request):
     else:
         form = UserProfileForm(instance=request.user)
     return render(request, 'profile-edit.html', {'form': form})
-    
+
+
 @login_required(login_url='login')
 def password_change(request):
     if request.method == 'POST':
@@ -266,16 +322,21 @@ def password_change(request):
         form = PasswordChangeForm(user=request.user)
     return render(request, 'change-password.html', {'form': form})
 
+
 class ResetPassword(UserPassesTestMixin, PasswordResetView):
     template_name = 'password_reset.html'
-    
+
     def test_func(self):
         return self.request.user.is_anonymous
+
 
 class ResetPasswordDone(PasswordResetDoneView):
     template_name = 'password_reset_done.html'
 
+
 class ResetPasswordConfirm(PasswordResetConfirmView):
     template_name = 'password_reset_confirm.html'
+
+
 class ResetPasswordComplete(PasswordResetCompleteView):
     template_name = 'password_reset_complete.html'

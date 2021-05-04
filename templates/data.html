@@ -81,6 +81,10 @@
             border-bottom: 0;
         }
     }
+    .form-control{
+        width: 65%;
+        margin-right: 5px;
+    }
 </style>
 {% endblock %} {% block content %}
 <div class="container">
@@ -91,9 +95,9 @@
                 <select name="categ" id="">
                 <option value="">--Select category--</option>
                 <option value="All" {% if 'All' == cat %} selected {% endif %}>All</option>
-                {% for catg in catgs %}
+                
                 <option value="{{catg.category}}" {% if catg.category == cat %} selected {% endif %}>{{catg.category}}</option>
-                {% endfor %}
+                
             </select>
                 <input type="submit" id='search-btn' class="btn btn-primary" value="Search">
             </form>
@@ -142,10 +146,11 @@
         </h3>
         <div style="margin-bottom: 15px;">
             <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search" id="searchField">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>
+        <div class="app-table">
         <table class="table table-hover">
             <thead class="thead">
                 <tr class="bg-info">
@@ -173,12 +178,36 @@
                 {% endfor %}
                 <tr>
                     <td colspan="4 " style="text-align: center;font-size:large;font-weight:bold;">Total Expenses </td>
-                    <td style="font-weight: bold;text-align:center ">{{total_exps.amount__sum}}</td>
+                    {% if val == 'amount' %}
+                    <td style="font-weight: bold;text-align:center;">{{total_exps}}
+                    {%else%}
+                    <td style="font-weight: bold;text-align:center">{{total_exps.amount__sum}}
+                    {% endif %}
+                    </td>
                     <td></td>
                 </tr>
 
             </tbody>
         </table>
+    </div>
+    <div class="table-output">
+        <table class="table table-hover">
+            <thead class="thead">
+                <tr class="bg-info">
+                    <th scope="col">No</th>
+                    <th scope="col">Date/Time</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Purpose</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                
+
+            </tbody>
+        </table>
+    </div>
 
     </div>
     {% else %}
@@ -186,3 +215,54 @@
     {% endif %}
 </div>
 {% endblock %}
+{% block js_script %}
+<script>
+const searchField = document.querySelector("#searchField");
+const tableOutput = document.querySelector(".table-output");
+const appTable = document.querySelector(".app-table");
+const tbody = document.querySelector(".table-body");
+tableOutput.style.display = 'None ';
+searchField.addEventListener('keyup', (e) => {
+    const searchValue = e.target.value;
+    if (searchValue.trim().length > 0) {
+        console.log("searchValue", searchValue);
+        tbody.innerHTML = "";
+        fetch("{% url 'search' %}", {
+                body: JSON.
+                stringify({
+                    searchText: searchValue
+                }),
+                method: "POST",
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("data", data);
+                appTable.style.display = "none"
+                tableOutput.style.display = "block";
+
+                if (data.length === 0) {
+                    tableOutput.style.display = 'none';
+                    appTable.style.display = 'block';
+                    appTable.innerHTML = 'No result found'
+
+                } else {
+                    data.forEach((item) => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${item.date}</td>
+                                <td>${item.category}</td>
+                                <td>${item.purpose}</td>
+                                <td>${item.amount}</td>
+                                <td><a class="btn btn-primary" href="user_details/${item.id}">Details</a>
+                                </td>
+                            </tr> `
+                    });
+                }
+            });
+    } else {
+        appTable.style.display = "block";
+        tableOutput.style.display = "none";
+    }
+});
+</script>
+{%endblock%}
