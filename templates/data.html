@@ -81,76 +81,34 @@
             border-bottom: 0;
         }
     }
-    .form-control{
+    
+    .form-control {
         width: 65%;
         margin-right: 5px;
     }
 </style>
 {% endblock %} {% block content %}
 <div class="container">
-    <!-- <div id="show-btn">
-        <div id='show-catg'>
-            <form action="" method="POST">
-                {% csrf_token %}
-                <select name="categ" id="">
-                <option value="">--Select category--</option>
-                <option value="All" {% if 'All' == cat %} selected {% endif %}>All</option>
-                
-                <option value="{{catg.category}}" {% if catg.category == cat %} selected {% endif %}>{{catg.category}}</option>
-                
-            </select>
-                <input type="submit" id='search-btn' class="btn btn-primary" value="Search">
-            </form>
+    <div style="height:50px; margin:10px;">
+        {% if messages %} {% for message in messages %}
+        <div class="alert alert-{{message.tags}}" role="alert">
+            <button type="button" class="close" data-dismiss="alert">X</button> {{message}}
         </div>
-        <div><i id='show-icon' class="fas fa-angle-double-right fa-2x"></i></div>
-    </div> -->
-    {% if exps %}
-    <div class="m-3">
-        <!-- <h3 class="text-center">My Expenses
-            <hr>
-        </h3>
-        <table class=" table table-hover">
-            <thead class="thead bg-info">
-                <tr class="text-center">
-                    <th scope="col">No</th>
-                    <th scope="col">Date/Time</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Purpose</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Actions</th>
-                </tr>
-
-            </thead>
-            <tbody class="tobody">
-                {% for exp in exps %}
-                <tr class="text-center">
-                    <td scope="">{{forloop.counter}}</td>
-                    <td>{{exp.date}}</td>
-                    <td>{{exp.category}}</td>
-                    <td>{{exp.purpose}}</td>
-                    <td style="text-align: center;">{{exp.amount}}</td>
-                    <td><a href="{% url 'edit' exp.id %}" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="{% url 'delete' exp.id %}" class="btn btn-warning btn-sm">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td colspan="4 " style="text-align: center;font-size:large;font-weight:bold;">Total Expenses </td>
-                    <td style="font-weight: bold;text-align:center ">{{total_exps.amount__sum}}</td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table> -->
+        {% endfor %} {% endif %}
+    </div>
+    <div style="margin-top:10px;">
         <h3 class="text-center">My Expenses
             <hr>
         </h3>
+
         <div style="margin-bottom: 15px;">
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search" id="searchField">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>
-        <div class="app-table">
+        {% if exps %}
+
         <table class="table table-hover">
             <thead class="thead">
                 <tr class="bg-info">
@@ -162,7 +120,7 @@
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
-            <tbody class="tobdy">
+            <tbody>
                 {% for exp in exps %}
                 <tr>
                     <td scope="row" data-label="No">{{forloop.counter}}</td>
@@ -171,83 +129,62 @@
                     <td data-label="Purpose">{{exp.purpose}}</td>
                     <td data-label="Amount">{{exp.amount}}</td>
                     <td data-label="Actions">
-                        <a href="{% url 'edit' exp.id %}" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="{% url 'delete' exp.id %}" class="btn btn-warning btn-sm">Delete</a>
+                        <a href="{% url 'edit' exp.id %}" class="btn btn-info btn-sm">Edit</a>
+                        <a href="{% url 'delete' exp.id %}" class="btn btn-warning btn-sm del_button" >Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td colspan="4 " style="text-align: center;font-size:large;font-weight:bold;">Total Expenses </td>
                     {% if val == 'amount' %}
-                    <td style="font-weight: bold;text-align:center;">{{total_exps}}
-                    {%else%}
-                    <td style="font-weight: bold;text-align:center">{{total_exps.amount__sum}}
-                    {% endif %}
-                    </td>
-                    <td></td>
+                    <td style="font-weight: bold;text-align:center;">{{total_exps}} {%else%}
+                        <td style="font-weight: bold;text-align:center">{{total_exps.amount__sum}} {% endif %}
+                        </td>
+                        <td></td>
                 </tr>
 
             </tbody>
         </table>
+        {% else %}
+         {% if message %}  {{message}}
+         {% else %}
+        <p>Na value</p>
+        {% endif %} {% endif %}
     </div>
-    <div class="table-output">
-        <table class="table table-hover">
-            <thead class="thead">
-                <tr class="bg-info">
-                    <th scope="col">No</th>
-                    <th scope="col">Date/Time</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Purpose</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="table-body">
-                
-
-            </tbody>
-        </table>
-    </div>
-
-    </div>
-    {% else %}
-    <p style="color: red;font-size:large ">No value</p>
-    {% endif %}
 </div>
-{% endblock %}
-{% block js_script %}
+{% endblock %} {% block js_script %}
 <script>
-const searchField = document.querySelector("#searchField");
-const tableOutput = document.querySelector(".table-output");
-const appTable = document.querySelector(".app-table");
-const tbody = document.querySelector(".table-body");
-tableOutput.style.display = 'None ';
-searchField.addEventListener('keyup', (e) => {
-    const searchValue = e.target.value;
-    if (searchValue.trim().length > 0) {
-        console.log("searchValue", searchValue);
-        tbody.innerHTML = "";
-        fetch("{% url 'search' %}", {
-                body: JSON.
-                stringify({
-                    searchText: searchValue
-                }),
-                method: "POST",
-            })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log("data", data);
-                appTable.style.display = "none"
-                tableOutput.style.display = "block";
+    const searchField = document.querySelector("#searchField");
+    const tableOutput = document.querySelector(".table-output");
+    const appTable = document.querySelector(".app-table");
+    const tbody = document.querySelector(".table-body");
+    tableOutput.style.display = 'None ';
+    searchField.addEventListener('keyup', (e) => {
+        const searchValue = e.target.value;
+        if (searchValue.trim().length > 0) {
+            console.log("searchValue", searchValue);
+            tbody.innerHTML = "";
+            fetch("", {
+                    body: JSON.
+                    stringify({
+                        searchText: searchValue
+                    }),
+                    method: "POST",
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log("data", data);
+                    appTable.style.display = "none"
+                    tableOutput.style.display = "block";
 
-                if (data.length === 0) {
-                    tableOutput.style.display = 'none';
-                    appTable.style.display = 'block';
-                    appTable.innerHTML = 'No result found'
+                    if (data.length === 0) {
+                        tableOutput.style.display = 'none';
+                        appTable.style.display = 'block';
+                        appTable.innerHTML = 'No result found'
 
-                } else {
-                    data.forEach((item) => {
-                        tbody.innerHTML += `
+                    } else {
+                        data.forEach((item) => {
+                            tbody.innerHTML += `
                             <tr>
                                 <td>${item.date}</td>
                                 <td>${item.category}</td>
@@ -256,13 +193,13 @@ searchField.addEventListener('keyup', (e) => {
                                 <td><a class="btn btn-primary" href="user_details/${item.id}">Details</a>
                                 </td>
                             </tr> `
-                    });
-                }
-            });
-    } else {
-        appTable.style.display = "block";
-        tableOutput.style.display = "none";
-    }
-});
+                        });
+                    }
+                });
+        } else {
+            appTable.style.display = "block";
+            tableOutput.style.display = "none";
+        }
+    });
 </script>
 {%endblock%}

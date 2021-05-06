@@ -23,5 +23,9 @@ $(document).ready(function() {
         });
     });
 
+    $('.del_button').on('click', function() {
+        return confirm('Are you sure?');
+    });
+
 
 });

@@ -16,21 +16,30 @@
 </head>
 
 <body>
+    <div>
     <nav>
         <div id="logo">
             <h1>Daily Activities</h1>
         </div>
 
         <ul>
+            
+            
+            
+            {% if user.is_authenticated %}
             <li class="items">
                 <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
             </li>
-            <li class="items"> <a href="{% url 'about' %}"><i class="fas fa-add"></i>About </a> </li>
             <li class="items">
                 <a id="ad" href="{% url 'add' %}"><i class="fas fa-plus-circle"></i> Add</a>
             </li>
             <li class="items"> <a href="{% url 'data' %}"><i class="fas fa-eye"></i> show</a></li>
-            <li class="items"> <a href=""><i class="fas fa-phone-square-alt"></i> contact</a> </li>
+            {%else%}
+            <li class="items">
+                <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
+            </li>
+            <li class="items"> <a href="{% url 'about' %}"><i class="fas fa-add"></i>About </a> </li>
+            {% endif%}
         </ul>
 
         <div id="prof">
@@ -45,16 +54,19 @@
             </ul>
         </div>
     </nav>
+    </div>
     <div id="side-menu">
 
         <ul>
             <li><a href=" {% url 'profile' %} ">profile</a></li>
-            <li><a href=" ">settings</a></li>
             <li><a href="{% url 'logout' %} ">logout</a></li>
         </ul>
 
     </div>
-    {% block content %}{% endblock %}
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+    
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js "></script> -->
     <!-- <script src="https://kit.fontawesome.com/bf12ee2437.js " crossorigin="anonymous "></script> -->

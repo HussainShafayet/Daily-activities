@@ -1,10 +1,16 @@
-{% extends 'base.html' %}{% load crispy_forms_tags %} {% block title %}Edit{% endblock %}
-{% block content %}
+{% extends 'base.html' %}{% load crispy_forms_tags %} {% block title %}Edit{% endblock %} {% block content %}
 <div class="container">
+    <div>
+        {% if messages %} {% for message in messages %}
+        <div class="alert alert-{{message.tags}}" role="alert">
+            <button type="button" class="close" data-dismiss="alert">X</button> {{message}}
+        </div>
+        {% endfor %} {% endif %}
+    </div>
     <div id="edit-form">
-    <form action="" method="POST">
-        {% csrf_token %}
-        <!-- <table> {% for field in form %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            <!-- <table> {% for field in form %}
 
             <tr>
                 <th class="label">{{field.label_tag}}</th>
@@ -13,12 +19,12 @@
             {% endfor %}
         </table>
  -->
-        {{form|crispy}}
-        <div id="edit-btn">
-            <input class="btn btn-primary" type="submit" name="" value="Save">
-            <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'data' %}">Cansel</a>
-        </div>
-    </form>
+            {{form|crispy}}
+            <div id="edit-btn">
+                <input class="btn btn-primary" type="submit" name="" value="Save">
+                <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'data' %}">Cansel</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

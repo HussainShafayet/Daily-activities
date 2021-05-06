@@ -117,7 +117,6 @@ def data(request):
     catgs = Category.objects.filter(user=current_user)
     if ('search') in request.GET:
         cat = request.GET.get('search')
-
         if cat:
             catgs = Category.objects.filter(user=current_user).filter(
                 Q(category__icontains=str(cat)))
@@ -128,21 +127,31 @@ def data(request):
                         user=current_user, category=i).order_by('date')
                     for j in expen:
                         test.append(j)
+                if not test:
+                    context = {
+                        'message':'Not found.'
+                    }
+                    return render(request, 'data.html', context)
                 amount = 0
                 for i in test:
                     amount = amount + (i.amount)
-                val='amount'
+                val = 'amount'
                 context = {
                     'cat': cat,
                     'catgs': catgs,
                     'total_exps': amount,
                     'exps': test,
-                    'val':val,
+                    'val': val,
                 }
                 return render(request, 'data.html', context)
             else:
                 exps = Expenses.objects.filter(user=current_user).filter(
-                    Q(purpose__icontains=str(cat)) | Q(amount__icontains=str(cat)))
+                    Q(purpose__icontains=str(cat)) | Q(amount__icontains=str(cat)) | Q(date__icontains=str(cat)))
+                if not exps:
+                    context = {
+                        'message': 'Not found.'
+                    }
+                    return render(request, 'data.html', context)
                 total_exps = exps.aggregate(Sum('amount'))
                 context = {
                     'cat': cat,
@@ -175,26 +184,28 @@ def data(request):
         }
         return render(request, 'data.html', context)
 
+
 def search_item(request):
     if request.method == "POST":
-        current_user=request.user
+        current_user = request.user
         search_str = json.loads(request.body).get("searchText")
-        catg = Category.objects.filter(user=current_user).filter(Q(category__icontains=str(search_str)))
+        catg = Category.objects.filter(user=current_user).filter(
+            Q(category__icontains=str(search_str)))
         test = []
         for i in catg:
-            expen = Expenses.objects.filter(user=current_user, category=i).order_by('date')
+            expen = Expenses.objects.filter(
+                user=current_user, category=i).order_by('date')
             for j in expen:
                 test.append(j)
         amount = 0
-        print(type(expen))
-        print(expen)
         for i in test:
             amount = amount + (i.amount)
-        
 
         #data = test.values()
-        #print(data)
+        # print(data)
         return JsonResponse(expen, safe=False)
+
+
 @login_required(login_url='login')
 def form(request):
     if request.method == 'POST':
@@ -206,7 +217,14 @@ def form(request):
             exp.purpose = exp_form.cleaned_data['purpose']
             exp.amount = exp_form.cleaned_data['amount']
             exp.save()
-        return redirect('data')
+            messages.success(request,'Added Successfully.')
+            return redirect('data')
+        else:
+            messages.warning(request,'Try again!')
+            context = {
+                'exp_form': exp_form
+            }
+        return render(request, 'form.html', context)
 
     else:
         exp_form = MyExpenses(request.user)
@@ -228,13 +246,16 @@ def add_category(request):
             cat.category = category.cleaned_data['category']
             for i in all_cat:
                 if i.category == cat.category and i.user == request.user:
-                    context = {
-                        'category': Add_category(),
-                        'error': 'This category already added!'
-                    }
-                    return render(request, 'category.html', context)
+                    messages.warning(request,'This category already added!')
+                    return redirect('category')
             cat.save()
+            messages.success(request,'Category added successfully.')
             return redirect('add')
+        else:
+            context = {
+                'category':category
+            }
+        return render(request, 'category.html', context)
     else:
         category = Add_category()
         context = {
@@ -258,6 +279,7 @@ def edit(request, id):
         expense.purpose = request.POST['purpose']
         expense.amount = request.POST['amount']
         expense.save()
+        messages.success(request, 'Update successfully.')
         return redirect('data')
     else:
         form = MyExpenses(instance=expense, user=request.user)
@@ -271,6 +293,7 @@ def edit(request, id):
 def delete(request, id):
     expense = Expenses.objects.get(id=id)
     expense.delete()
+    messages.success(request,'Deleted Successfully.')
     return redirect('data')
 
 

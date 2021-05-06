@@ -3,7 +3,10 @@
     margin: 0;
     box-sizing: border-box;
 }
-
+ body {
+        margin: 0;
+        padding: 0;
+    }
 
 /* Menubar Design*/
 
@@ -124,29 +127,11 @@ nav #prof .pro {
     align-items: center;
 }
 
-#add-data .label {
-    color: rgb(13, 184, 206);
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: end;
-}
 
-#add-data input[type='text'],
-input[type='number'],
-select {
-    border: 2px solid rgb(51, 153, 76);
-    border-radius: 4px;
-    width: 200px;
-    height: 40px;
-    padding: 6px 10px;
-}
 
-#add-data input[type='text']:focus,
-input[type='number']:focus,
-select:focus {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
+
+
+
 
 #add-data #add-subm {
     width: 100px;
@@ -180,17 +165,8 @@ select:focus {
     margin-right: 5px;
 }
 
-#add-catg input[type='text'] {
-    border: 2px solid rgb(51, 153, 76);
-    border-radius: 4px;
-    width: 200px;
-    height: 40px;
-    padding: 6px 10px;
-}
 
-#add-catg input[type='text']:focus {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
+
 
 #catg-btn {
     text-align: center;
@@ -280,7 +256,8 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: darkseagreen;
+    background-color: #a2dda2;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
 }
 
 #edit-form tr,
@@ -299,25 +276,13 @@ select:focus {
     margin: 8px;
 }
 
-#edit-form select,
-.inp input[type='text'],
-input[type='number'] {
-    border: 2px solid rgb(51, 153, 76);
-    border-radius: 4px;
-    min-width: 200px;
-    height: 40px;
-    padding: 6px 10px;
-}
 
-#edit-form input[type='text']:focus,
-input[type='number']:focus,
-select:focus {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
+
 
 #edit-btn {
     text-align: center;
     margin-top: 10px;
+    margin: 10px;
 }
 
 
@@ -506,17 +471,6 @@ select:focus {
     -o-transform: translate(-50%, -80%);
 }
 
-.alert-success {
-    position: absolute;
-    width: 100%;
-    top: 140px;
-    left: 50%;
-    transform: translate(-50%);
-    -webkit-transform: translate(-50%);
-    -moz-transform: translate(-50%);
-    -ms-transform: translate(-50%);
-    -o-transform: translate(-50%);
-}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -565,7 +519,9 @@ input[type="number"] {
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 
-@media only screen and (min-width: 600px) {}
+@media only screen and (min-width: 600px) {
+  
+}
 
 
 /* Medium devices (landscape tablets, 768px and up) */
