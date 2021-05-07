@@ -32,6 +32,8 @@ def register(request):
             user = user_form.save(commit=False)
             user.is_active = False
             user.save()
+            new_profile = Profile(user=user)
+            new_profile.save()
             current_site = get_current_site(request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('acc_active_email.html', {
@@ -46,13 +48,17 @@ def register(request):
             )
             email.send()
             return HttpResponse('Please confirm your email address to complete the registration')
+        else:
+            context = {
+                'user_form': user_form
+            }
+            return render(request, 'register.html', context)
 
     else:
-
         user_form = Register()
-    context = {
-        'user_form': user_form
-    }
+        context = {
+            'user_form': user_form
+        }
     return render(request, 'register.html', context)
 
 
@@ -129,7 +135,7 @@ def data(request):
                         test.append(j)
                 if not test:
                     context = {
-                        'message':'Not found.'
+                        'message': 'Not found.'
                     }
                     return render(request, 'data.html', context)
                 amount = 0
@@ -217,10 +223,10 @@ def form(request):
             exp.purpose = exp_form.cleaned_data['purpose']
             exp.amount = exp_form.cleaned_data['amount']
             exp.save()
-            messages.success(request,'Added Successfully.')
+            messages.success(request, 'Added Successfully.')
             return redirect('data')
         else:
-            messages.warning(request,'Try again!')
+            messages.warning(request, 'Try again!')
             context = {
                 'exp_form': exp_form
             }
@@ -246,14 +252,14 @@ def add_category(request):
             cat.category = category.cleaned_data['category']
             for i in all_cat:
                 if i.category == cat.category and i.user == request.user:
-                    messages.warning(request,'This category already added!')
+                    messages.warning(request, 'This category already added!')
                     return redirect('category')
             cat.save()
-            messages.success(request,'Category added successfully.')
+            messages.success(request, 'Category added successfully.')
             return redirect('add')
         else:
             context = {
-                'category':category
+                'category': category
             }
         return render(request, 'category.html', context)
     else:
@@ -293,7 +299,7 @@ def edit(request, id):
 def delete(request, id):
     expense = Expenses.objects.get(id=id)
     expense.delete()
-    messages.success(request,'Deleted Successfully.')
+    messages.success(request, 'Deleted Successfully.')
     return redirect('data')
 
 
@@ -305,28 +311,48 @@ def profile(request):
             pro = Profile()
             pro.user = request.user
             pro.image = pro_form.cleaned_data['image']
-            # pro.file=pro_form.cleaned_data['file']
             pro.save()
             return redirect('profile')
     else:
         pro_form = ProfileForm()
-    return render(request, 'profile.html', {'pro_form': pro_form})
+    return render(request, 'profile.html', {'pro_form': pro_form, 'profile_details': 'profile_details'})
 
 
 @login_required(login_url='login')
 def edit_profile(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
+        form2 = ProfileForm(request.POST or None, request.FILES or None, instance=request.user.profile)
+        if form.is_valid() and form2.is_valid():
             form.save()
-            messages.success(request, 'Profile update success')
-            return redirect('profile')
+            profile = Profile.objects.get(user=request.user)
+            image = profile.image
+            if str(image) in '/images/profile.png':
+                form2.save()
+                messages.success(request, 'Profile update success')
+                return redirect('profile')
+            else:
+                image.delete()
+                form2.save()
+                messages.success(request, 'Profile update success')
+                return redirect('profile')
         else:
-            messages.error(request, 'Try again')
-            return redirect('edit-profile')
+            messages.warning(request, 'Try again')
+            context = {
+                'form': form,
+                'form2': form2
+
+            }
+            return render(request, 'profile.html', context)
     else:
         form = UserProfileForm(instance=request.user)
-    return render(request, 'profile-edit.html', {'form': form})
+        form2 = ProfileForm()
+        context = {
+            'form': form,
+            'form2': form2
+
+        }
+    return render(request, 'profile.html', context)
 
 
 @login_required(login_url='login')
@@ -343,7 +369,12 @@ def password_change(request):
             return redirect('password')
     else:
         form = PasswordChangeForm(user=request.user)
-    return render(request, 'change-password.html', {'form': form})
+        val = 'password_change'
+        context = {
+            'form': form,
+            'val': val,
+        }
+    return render(request, 'profile.html', context)
 
 
 class ResetPassword(UserPassesTestMixin, PasswordResetView):

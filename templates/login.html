@@ -1,17 +1,19 @@
 {% extends 'base.html' %}{% load crispy_forms_tags %}{% block title %}LogIn{% endblock %}{% block content %}
-
+<div class="container">
 <div id="div_login">
-    <h1>Login Here</h1>
+    <h3 style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Login Here <hr></h3>
     <form action="" method="POST">
-        {% csrf_token %} {{log_form}}{% if error %}
+        {% csrf_token %} {{log_form}}
+        {% if error %}
         <p class="text-danger">{{error}}</p>
         {% endif %}
         <small id="forgot-pass">
             <a href="{% url 'password_reset' %}">Forgot password? </a>
         </small>
-        <input id="log-btn" type="submit" class="btn btn-primary" value="Login">
+        <input id="log-btn" type="submit" class="btn btn-info" value="Login">
 
     </form>
-    <p id="reg-log">Don't have an account? <a href="{% url 'register' %}">Registration here</a></p>
+    <p id="reg-log">Don't have an account? <a href="{% url 'register' %}">Registration </a></p>
+</div>
 </div>
 {% endblock %}

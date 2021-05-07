@@ -65,19 +65,19 @@ class Register(UserCreationForm):
             'placeholder': 'Confirm password'
         })
     
-    def clean(self):
+    """ def clean(self):
         cleaned_data = super(Register, self).clean()
         email = cleaned_data.get("email")
         
         if User.objects.filter(email=email):
             raise forms.ValidationError('Email already exists.')
-        return self.cleaned_data
+        return self.cleaned_data """
     
 class UserLoginForm(forms.Form):
     username = forms.CharField()
     password=forms.CharField(widget=forms.PasswordInput)
     
-class UserProfileForm(UserChangeForm):
+class UserProfileForm(forms.ModelForm):
     password = None
     class Meta:
         model = User
@@ -86,24 +86,6 @@ class UserProfileForm(UserChangeForm):
             'first_name','last_name','username','email'
         ]
 
-    def __init__(self, *args, **kwargs):
-        super(UserProfileForm, self).__init__(*args, **kwargs)
-
-        self.fields['first_name'].widget.attrs.update({
-            'autofocus': True,
-            'required': True,
-        })
-        self.fields['last_name'].widget.attrs.update({
-            'required': True,
-        })
-        self.fields['username'].widget.attrs.update({
-            'placeholder': 'username',
-            'autofocus': False
-        })
-        self.fields['email'].widget.attrs.update({
-            'required': True,
-
-        })
 class ProfileForm(forms.ModelForm): 
     class Meta:
         model = Profile

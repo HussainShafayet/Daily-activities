@@ -11,7 +11,7 @@
 /* Menubar Design*/
 
 nav {
-    background-color: darkgoldenrod;
+    background-color: rgb(83, 204, 198);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -289,10 +289,18 @@ nav #prof .pro {
 /* Login page */
 
 #div_login {
-    width: 500px;
+    max-width: 500px;
     margin: 0 auto;
     margin-top: 50px;
     text-align: center;
+    border: 1px solid slategray;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
+    background-color: #eff0f0;
+    border-radius: 10% 1% 10% 1%;
+    -webkit-border-radius: 10% 1% 10% 1%;
+    -moz-border-radius: 10% 1% 10% 1%;
+    -ms-border-radius: 10% 1% 10% 1%;
+    -o-border-radius: 10% 1% 10% 1%;
 }
 
 #div_login input[type="text"],
@@ -304,7 +312,7 @@ nav #prof .pro {
     text-align: center;
     border: 2px solid#3498db;
     padding: 12px 16px;
-    width: 300px;
+    max-width: 300px;
     outline: none;
     color: black;
     border-radius: 24px;
@@ -314,7 +322,7 @@ nav #prof .pro {
 
 #div_login input[type="text"]:focus,
 #div_login input[type="password"]:focus {
-    width: 380px;
+    max-width: 380px;
     border-color: #2ecc71;
     font-size: 18px;
 }
@@ -361,77 +369,114 @@ nav #prof .pro {
 /* Profile */
 
 .pro-dashboard {
-    width: 800px;
-    height: 600px;
-    margin: 0px auto;
-    margin-top: 100px;
-    position: relative;
-    border: 1px solid darkgray;
+        max-width: 800px;
+        min-height: 700px;
+        margin: 0px auto;
+        margin-top: 100px;
+        margin-bottom: 20px;
+        position: relative;
+        border: 1px solid #6cc792;
+        background-color: rgb(234, 237, 241);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+    
+    .pro-header {
+        width: 100%;
+        height: 100px;
+        position: absolute;
+        background-color: #2ecc71;
+    }
+    
+    .pro-img {
+        width: 180px;
+        height: 180px;
+        border: 2px solid goldenrod;
+        border-radius: 50%;
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .pro-value {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .pro-value table {
+        width: 50%;
+        position: absolute;
+        left: 50%;
+        top: 60%;
+        background-color: #6fb471;
+        transform: translate(-50%, -65%);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-transform: translate(-50%, -65%);
+        -moz-transform: translate(-50%, -65%);
+        -ms-transform: translate(-50%, -65%);
+        -o-transform: translate(-50%, -65%);
+    }
+    
+    .pro-value td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .but-div {
+        width: 100%;
+        background-color: cadetblue;
+        position: absolute;
+        height: 40px;
+        top: 100px;
+        display: flex;
+    }
+    
+    .profile a {
+        color: rgb(190, 29, 29);
+        display: flex;
+        justify-content: start;
+        flex-direction: row;
+        align-items: center;
+        text-decoration: none;
+        padding: 5px;
+    }
+    
+    .but-div a:hover {
+        background-color: aquamarine;
+        transition: 1s;
+        -webkit-transition: 1s;
+        -moz-transition: 1s;
+        -ms-transition: 1s;
+        -o-transition: 1s;
+    }
+    
+    .pro-edtform {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
 }
-
-.pro-header {
-    width: 100%;
-    height: 100px;
-    position: absolute;
-    background-color: #2ecc71;
-}
-
-.pro-img {
-    width: 150px;
-    height: 150px;
-    border: 2px solid goldenrod;
-    border-radius: 50%;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    -ms-border-radius: 50%;
-    -o-border-radius: 50%;
-}
-
-.pro-value {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: darkcyan;
-    top: 140px;
-}
-
-.pro-value table {
-    width: 50%;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-}
-
-.pro-info tr th {
-    display: flex;
-    justify-content: end;
-    margin-right: 10px;
-    color: #3498db;
-    font-size: 1.2em;
-}
-
-.pro-info tr td {
-    font-size: 1em;
-    color: black;
-    font-family: Arial, Helvetica, sans-serif;
-}
+    
+    #profile_message {
+        position: absolute;
+        width: 100%;
+        top: 140px;
+        left: 50%;
+        transform: translate(-50%);
+        -webkit-transform: translate(-50%);
+        -moz-transform: translate(-50%);
+        -ms-transform: translate(-50%);
+        -o-transform: translate(-50%);
+    }
 
 .but-div {
     width: 100%;
@@ -460,16 +505,7 @@ nav #prof .pro {
     -o-transition: 1s;
 }
 
-.pro-edtform {
-    position: absolute;
-    left: 50%;
-    top: 80%;
-    transform: translate(-50%, -80%);
-    -webkit-transform: translate(-50%, -80%);
-    -moz-transform: translate(-50%, -80%);
-    -ms-transform: translate(-50%, -80%);
-    -o-transform: translate(-50%, -80%);
-}
+
 
 
 input::-webkit-outer-spin-button,
@@ -514,6 +550,37 @@ input[type="number"] {
     #tab1 {
         overflow-y: scroll;
     }
+    .pro-dashboard {
+        max-width: 800px;
+        min-height: 755px;
+        margin: 0px auto;
+        margin-top: 100px;
+        margin-bottom: 20px;
+        position: relative;
+        border: 1px solid #6cc792;
+        background-color: rgb(234, 237, 241);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+    .pro-edtform {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -40%);
+        -webkit-transform: translate(-50%, -40%);
+        -moz-transform: translate(-50%, -40%);
+        -ms-transform: translate(-50%, -40%);
+        -o-transform: translate(-50%, -40%);
+}
+    #profile_value td{
+        text-align: left;
+        padding: 2px;
+    }
+    .test1 a {
+    text-decoration: none;
+    padding: 8px;
+    color: black;
+    font-size: 15px;
+}
 }
 
 

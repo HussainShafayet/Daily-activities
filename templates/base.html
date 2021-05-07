@@ -10,70 +10,81 @@
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"> -->
     <link rel="stylesheet" type="text/css" href="/media/bootstrap/css/bootstrap.min.css.map" media="all">
     <link rel="stylesheet" type="text/css" href="/media/bootstrap/css/bootstrap.min.css" media="all">
-
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
     <link rel="stylesheet" href="{% static 'style/main.css' %}" type="text/css">{% block style %}{% endblock %}
 </head>
 
 <body>
     <div>
-    <nav>
-        <div id="logo">
-            <h1>Daily Activities</h1>
-        </div>
+        <nav>
+            <div id="logo">
+                <h2  style="font-family:'Caveat', cursive;"> Daily Activities</h2>
+            </div>
 
-        <ul>
-            
-            
-            
-            {% if user.is_authenticated %}
-            <li class="items">
-                <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
-            </li>
-            <li class="items">
-                <a id="ad" href="{% url 'add' %}"><i class="fas fa-plus-circle"></i> Add</a>
-            </li>
-            <li class="items"> <a href="{% url 'data' %}"><i class="fas fa-eye"></i> show</a></li>
-            {%else%}
-            <li class="items">
-                <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
-            </li>
-            <li class="items"> <a href="{% url 'about' %}"><i class="fas fa-add"></i>About </a> </li>
-            {% endif%}
-        </ul>
-
-        <div id="prof">
             <ul>
+
+
+
                 {% if user.is_authenticated %}
-                <li class="pro">Welcome, {{user.first_name}}</li>
-
-                <li class="pro"><i id="icon" class="far fa-user-circle "></i></li>{% else %}
-
-                <li> <a href="{% url 'register'%}">sign up</a> </li>
-                <li> <a href="{% url 'login' %}">login</a> </li>{% endif %}
+                <li class="items">
+                    <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
+                </li>
+                <li class="items">
+                    <a id="ad" href="{% url 'add' %}"><i class="fas fa-plus-circle"></i> Add</a>
+                </li>
+                <li class="items"> <a href="{% url 'data' %}"><i class="fas fa-eye"></i> show</a></li>
+                {%else%}
+                <li class="items">
+                    <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
+                </li>
+                <li class="items"> <a href="{% url 'about' %}"><i class="fas fa-add"></i>About </a> </li>
+                {% endif%}
             </ul>
-        </div>
-    </nav>
+
+            <div id="prof">
+                <ul>
+                    {% if user.is_authenticated %}
+                    <li class="pro">Welcome, {{user.first_name}}</li>
+
+                    <li class="nav-item dropdown" style=" right:0px;">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{{user.profile.image.url}}" alt="image" width="30px" height="30px" style="border-radius: 50%; cursor:pointer;"></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </li>
+
+                    {% else %}
+
+                    <li> <a href="{% url 'register'%}">sign up</a> </li>
+                    <li> <a href="{% url 'login' %}">login</a> </li>{% endif %}
+                </ul>
+            </div>
+        </nav>
     </div>
     <div id="side-menu">
 
         <ul>
-            <li><a href=" {% url 'profile' %} ">profile</a></li>
-            <li><a href="{% url 'logout' %} ">logout</a></li>
+            <!-- <li><a href=" {% url 'profile' %} ">profile</a></li>
+            <li><a href="{% url 'logout' %} ">logout</a></li> -->
+
         </ul>
 
     </div>
     <div>
         {% block content %}{% endblock %}
     </div>
-    
+
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js "></script> -->
     <!-- <script src="https://kit.fontawesome.com/bf12ee2437.js " crossorigin="anonymous "></script> -->
     <script type="text/javascript" src="/media/bootstrap/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="/media/bootstrap/js/bf12ee2437.js"></script>
     <script type="text/javascript" src="/media/bootstrap/js/popper.min.js"></script>
-    <script type="text/javascript" type="text/javascript" src="/media/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/media/bootstrap/js/bootstrap.min.js"></script>
     {% block js_script %}{% endblock %}
     <script src="{% static 'js/main.js ' %} "></script>
 
