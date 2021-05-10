@@ -77,12 +77,12 @@ WSGI_APPLICATION = 'Daily_activities.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Daily activities',
-        'USER': 'postgres',
-        'PASSWORD': 'psql123',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'daily_activities',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PORT': '',
     }
 }
 

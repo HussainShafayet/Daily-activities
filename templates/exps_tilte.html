@@ -1,0 +1,59 @@
+{% extends 'base.html' %}{% load crispy_forms_tags %}{% block title %}New Expenses Record{% endblock %} {% block style %}
+<link href="/media/bootstrap/css/select2.min.css" rel="stylesheet" />
+<style>
+    
+    .select2-container .select2-selection--single {
+        height: 38px;
+    }
+    
+    .select2-container .select2-selection--single {
+        line-height: 38px;
+    }
+</style>
+{%endblock%} {% block content %}
+
+<div class="container">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col"></div>
+        <div class="col-sm">
+            <h3 class="text-center">Add Expense
+                <hr>
+            </h3>
+            <div>
+                {% if messages %} {% for message in messages %}
+                <div class="alert alert-{{message.tags}}" role="alert">
+                    <button type="button" class="close" data-dismiss="alert">X</button> {{message}}
+                </div>
+                {% endfor %} {% endif %}
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <!-- <table>
+            {% for field in exp_form %}
+            <tr>
+                <th class="label">{{field.label_tag}}</th>
+                <td>
+                    {{ field.errors }} {{ field }}{% if forloop.counter == 1 %}
+                    <a title="Add new category" href="{% url 'category' %}"><i id="catg-add"  class="fas fa-plus"></i></a>{% endif %}
+                </td>
+            </tr> {% endfor %}
+        </table> -->
+
+                {{form|crispy}}
+                <input id="add-subm" class="btn btn-info" type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="col"></div>
+
+    </div>
+</div>
+
+{% endblock %} {% block js_script %}
+<script src="/media/bootstrap/js/select2.min.js"></script>
+<script>
+    /*selec*/
+    $('#id_category').select2({
+
+    });
+</script>
+{%endblock%}

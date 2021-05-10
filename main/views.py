@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Expenses, Category, Profile, User
-from .forms import MyExpenses, Register, UserLoginForm, Add_category, UserProfileForm, ProfileForm
+from .models import Expenses, Category, Profile, User, ExpensesTitle
+from .forms import MyExpenses, Register, UserLoginForm, Add_category, UserProfileForm, ProfileForm, Expenses_Title_Form
 from django.contrib.auth.views import PasswordChangeForm, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -31,37 +31,43 @@ def register(request):
         if user_form.is_valid():
             email = user_form.cleaned_data['email']
             get_email = User.objects.filter(email=email)
-            if email in get_email:
-                messages.warning(request, 'Email already exists.')
-                context = {
-                    'user_form': user_form
-                }
-                return render(request, 'register.html', context)
-            else:
-                user = user_form.save(commit=False)
-                user.is_active = False
-                user.save()
-                new_profile = Profile(user=user)
-                new_profile.save()
-                current_site = get_current_site(request)
-                mail_subject = 'Activate your blog account.'
-                message = render_to_string('acc_active_email.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                    'token': account_activation_token.make_token(user),
-                })
-                to_email = user_form.cleaned_data.get('email')
-                email = EmailMessage(
-                    mail_subject, message, to=[to_email]
-                )
-                email.send()
-                return HttpResponse('Please confirm your email address to complete the registration')
+            for i in get_email:
+                if i.email == email:
+                    messages.warning(request, 'Email already exists.')
+                    context = {
+                        'user_form': user_form
+                    }
+                    return render(request, 'register.html', context)
+                    break
+
+            user = user_form.save(commit=False)
+            user.is_active = False
+            user.save()
+            new_profile = Profile(user=user)
+            new_profile.save()
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your blog account.'
+            message = render_to_string('acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            to_email = user_form.cleaned_data.get('email')
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+            val = 1
+            context = {
+                'val': val
+            }
+            return render(request, 'active_account.html', context)
         else:
             context = {
                 'user_form': user_form
             }
-            return render(request, 'register.html', context)
+        return render(request, 'register.html', context)
 
     else:
         user_form = Register()
@@ -80,11 +86,10 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        login(request, user)
-        # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        messages.success(request, 'Registration successful!')
+        return render(request, 'active_account.html', {'val': 2})
     else:
-        return HttpResponse('Activation link is invalid!')
+        return render(request, 'active_account.html')
 
 
 def user_login(request):
@@ -139,7 +144,7 @@ def data(request):
                 test = []
                 for i in catgs:
                     expen = Expenses.objects.filter(
-                        user=current_user, category=i).order_by('date')
+                        user=current_user, category=i, active=True).order_by('date')
                     for j in expen:
                         test.append(j)
                 if not test:
@@ -160,7 +165,7 @@ def data(request):
                 }
                 return render(request, 'data.html', context)
             else:
-                exps = Expenses.objects.filter(user=current_user).filter(
+                exps = Expenses.objects.filter(user=current_user, active=True).filter(
                     Q(purpose__icontains=str(cat)) | Q(amount__icontains=str(cat)) | Q(date__icontains=str(cat)))
                 if not exps:
                     context = {
@@ -178,7 +183,7 @@ def data(request):
         else:
             catgs = Category.objects.filter(user=current_user)
             exps = Expenses.objects.filter(
-                user=current_user).order_by('category', 'date',)
+                user=current_user, active=True).order_by('category', 'date',)
             total_exps = exps.aggregate(Sum('amount'))
             context = {
                 'catgs': catgs,
@@ -190,7 +195,7 @@ def data(request):
     else:
         catgs = Category.objects.filter(user=current_user)
         exps = Expenses.objects.filter(
-            user=current_user).order_by('category', 'date',)
+            user=current_user, active=True).order_by('category', 'date',)
         total_exps = exps.aggregate(Sum('amount'))
         context = {
             'catgs': catgs,
@@ -221,6 +226,29 @@ def search_item(request):
         return JsonResponse(expen, safe=False)
 
 
+def expenses_tilte(request):
+    if request.method == 'POST':
+        form = Expenses_Title_Form(request.POST, user=request.user)
+        if form.is_valid():
+            current_user = request.user
+            title = form.cleaned_data['title']
+            new_record_title = ExpensesTitle(user=current_user, title=title)
+            new_record_title.save()
+            messages.success(request, 'Thank you for your journey.')
+            return redirect('add')
+        else:
+            context = {
+                'form': form,
+            }
+            return render(request, 'exps_tilte.html', context)
+    else:
+        form = Expenses_Title_Form(user=request.user)
+        context = {
+            'form': form,
+        }
+        return render(request, 'exps_tilte.html', context)
+
+
 @login_required(login_url='login')
 def form(request):
     if request.method == 'POST':
@@ -228,6 +256,7 @@ def form(request):
         if exp_form.is_valid():
             exp = Expenses()
             exp.user = request.user
+
             exp.category = exp_form.cleaned_data['category']
             exp.purpose = exp_form.cleaned_data['purpose']
             exp.amount = exp_form.cleaned_data['amount']
@@ -239,7 +268,7 @@ def form(request):
             context = {
                 'exp_form': exp_form
             }
-        return render(request, 'form.html', context)
+            return render(request, 'form.html', context)
 
     else:
         exp_form = MyExpenses(request.user)
@@ -253,16 +282,17 @@ def form(request):
 @login_required(login_url='login')
 def add_category(request):
     if request.method == 'POST':
-        category = Add_category(request.POST)
+        category = Add_category(request.POST,user=request.user)
         if category.is_valid():
-            all_cat = Category.objects.all()
+            #all_cat = Category.objects.all()
             cat = Category()
             cat.user = request.user
             cat.category = category.cleaned_data['category']
-            for i in all_cat:
+            cat.title = category.cleaned_data['title']
+            """ for i in all_cat:
                 if i.category == cat.category and i.user == request.user:
                     messages.warning(request, 'This category already added!')
-                    return redirect('category')
+                    return redirect('category') """
             cat.save()
             messages.success(request, 'Category added successfully.')
             return redirect('add')
@@ -270,9 +300,9 @@ def add_category(request):
             context = {
                 'category': category
             }
-        return render(request, 'category.html', context)
+            return render(request, 'category.html', context)
     else:
-        category = Add_category()
+        category = Add_category(user=request.user)
         context = {
             'category': category
         }
@@ -312,6 +342,15 @@ def delete(request, id):
     return redirect('data')
 
 
+def expenses_active(request):
+    current_user = request.user
+    expenses = Expenses.objects.filter(user=current_user, active=True)
+    for i in expenses:
+        i.active = False
+        i.save()
+    return redirect('data')
+
+
 @login_required(login_url='login')
 def profile(request):
     if request.method == 'POST':
@@ -331,7 +370,8 @@ def profile(request):
 def edit_profile(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=request.user)
-        form2 = ProfileForm(request.POST or None, request.FILES or None, instance=request.user.profile)
+        form2 = ProfileForm(
+            request.POST or None, request.FILES or None, instance=request.user.profile)
         if form.is_valid() and form2.is_valid():
             form.save()
             profile = Profile.objects.get(user=request.user)

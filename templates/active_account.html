@@ -1,0 +1,25 @@
+{% extends 'base.html' %}{% block title %}Account Activation{% endblock %}{% block body %}
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col-mid-auto">
+        <div class="page-header" style="margin-top: 20px;">
+            <h2 class="text-center">Account Activation</h2>
+        </div>
+        <hr> {% if val == 1 %}
+        <p style="font-size:17px">Please confirm your email address to complete the registration</p>{% elif val == 2 %}
+        <div>
+            {% if messages %} {% for message in messages %}
+            <div class="alert alert-{{message.tags}}" role="alert" id=" ">
+                <button type="button" class="close" data-dismiss="alert">X</button> {{message}}
+            </div>
+            {% endfor %} {% endif %}
+        </div>
+        <p style=" font-size:17px ">Thank you for your email confirmation. Now you can
+            <a href="{% url 'login' %}">login</a> your account</p>{% else %}
+        <p style=" font-size:17px">Activation link is invalid!</p> {% endif %}
+    </div>
+    <div class=" col "></div>
+</div>
+
+{% endblock %}
