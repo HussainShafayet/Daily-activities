@@ -8,8 +8,9 @@ class Profile(models.Model):
     #file=models.FileField(null=True,blank=True,upload_to='documents/')
     
 class ExpensesTitle(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
+    active=models.BooleanField(default=True)
     
     def __str__(self):
         return self.title
@@ -23,7 +24,7 @@ class Category(models.Model):
         return self.category
 
 class Expenses(models.Model):
-    title = models.ForeignKey(ExpensesTitle, on_delete=models.CASCADE,)
+    title = models.ForeignKey(ExpensesTitle, on_delete=models.CASCADE)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     category=models.ForeignKey(Category,on_delete=models.CASCADE)

@@ -39,6 +39,21 @@
         border-top: 0px solid #DEE2E7;
     }
     
+    .card:hover {
+        background-color: rgb(113, 223, 204);
+        transition: .5s;
+        transform: scale(1.03);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
+    }
+    
+    a:hover {
+        color: black;
+    }
+    
+    .card-deck {
+        white-space: nowrap;
+    }
+    
     @media screen and (max-width: 600px) {
         table {
             border: 0;
@@ -87,7 +102,7 @@
         margin-right: 5px;
     }
 </style>
-{% endblock %} {% block content %}
+{% endblock %} {% block content %} {% if value == 'show_data' %}
 <div class="container">
     <div style="height:50px; margin:10px;">
         {% if messages %} {% for message in messages %}
@@ -96,8 +111,9 @@
         </div>
         {% endfor %} {% endif %}
     </div>
+    {% if title_name.active == True %}
     <div style="margin-top:10px;">
-        <h3 class="text-center">My Expenses
+        <h3 class="text-center">{{title_name}}
             <hr>
         </h3>
 
@@ -129,8 +145,8 @@
                     <td data-label="Purpose">{{exp.purpose}}</td>
                     <td data-label="Amount">{{exp.amount}}</td>
                     <td data-label="Actions">
-                        <a href="{% url 'edit' exp.id %}" class="btn btn-info btn-sm">Edit</a>
-                        <a href="{% url 'delete' exp.id %}" class="btn btn-warning btn-sm del_button" >Delete</a>
+                        <a href="{% url 'edit'  exp.title exp.id %}" class="btn btn-info btn-sm">Edit</a>
+                        <a href="{% url 'delete' exp.title exp.id %}" class="btn btn-warning btn-sm del_button">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -145,15 +161,69 @@
 
             </tbody>
         </table>
-        <a class="btn btn-info" href="{% url 'inactive' %}">Close</a>
-        {% else %}
-         {% if message %}  {{message}}
-         {% else %}
+        <div style="margin: 10px;">
+            <a class="btn btn-info" href="{% url 'pdf' title_name %}">Create Pdf</a>
+            <a style="float: right;" class="btn btn-warning" href="{% url 'inactive' title_name %}">Close</a>
+        </div>
+         {% else %} {% if message %} {{message}} {% else %}
         <p>Na value</p>
         {% endif %} {% endif %}
     </div>
+    {% else %}
+    <p class="text-center" style="color: red;">No Expenses Data</p>
+    {% endif %}
+
 </div>
-{% endblock %} {% block js_script %}
+
+{% else %}
+
+<div class="container">
+    {% if all_expenses_title %}
+    <h3 class="text-center">Expenses data are here
+        <hr>
+    </h3>
+
+    <div class="row">
+        {% for expenses_title in all_expenses_title %}
+        <div class="col">
+            <div class="container py-4">
+                <div class="card-deck-wrapper">
+                    <div class="card-deck">
+                        <div class="card p-2">
+                            <a class="card-block stretched-link text-decoration-none" href="{% url 'data' expenses_title.title %}">
+                                <h4 class="card-title" style="text-align: center;">{{expenses_title.title}}</h4>
+                                <hr>
+                                <p class="card-text" style="text-align: center;">Show {{expenses_title.title}} expenses.</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- <div class="col">
+                    <div class="container py-4">
+                        <div class="card-deck-wrapper">
+                            <div class="card-deck ">
+                                <div class="card p-2">
+                                    <a class="card-block stretched-link text-decoration-none" href="">
+                                        <h4 class="card-title" style="text-align: center;">+</h4>
+                                        <hr>
+                                        <p class="card-text" style="text-align: center;">Add New Syllabus</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+    </div>
+
+    {% else %}
+    <p class="text-center" style="color: red;margin-top:60px;">No Expenes here</p>
+    {% endif %}
+</div>
+
+{% endif %} {% endblock %} {% block js_script %}
 <script>
     const searchField = document.querySelector("#searchField");
     const tableOutput = document.querySelector(".table-output");

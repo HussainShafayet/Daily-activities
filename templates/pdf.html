@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+    <title>Title</title>
+    <style type="text/css">
+        table,
+        th,
+        td {
+            border: 1px solid darkgray;
+            border-collapse: collapse;
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class='wrapper'>
+        <p style="font-size: larger; text-align:center;">{{title_name}}
+            <hr>
+        </p>
+        <table class="table table-hover">
+            <thead class="thead">
+                <tr class="bg-info" style="padding: 2px;">
+                    <th scope="col">No</th>
+                    <th scope="col">Date/Time</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Purpose</th>
+                    <th scope="col">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exp in exps %}
+                <tr style="padding: 2px;">
+                    <td scope="row" data-label="No">{{forloop.counter}}</td>
+                    <td data-label="Date/Time">{{exp.date}}</td>
+                    <td data-label="Category">{{exp.category}}</td>
+                    <td data-label="Purpose">{{exp.purpose}}</td>
+                    <td data-label="Amount">{{exp.amount}}</td>
+                </tr>
+                {% endfor %}
+                <tr style="padding: 2px;">
+                    <td colspan="4 " style="text-align: center;font-size:large;font-weight:bold;">Total Expenses </td>
+                    {% if val == 'amount' %}
+                    <td style="font-weight: bold;text-align:center;">{{total_exps}} {%else%}
+                        <td style="font-weight: bold;text-align:center">{{total_exps.amount__sum}} {% endif %}
+                        </td>
+                        
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+</body>
+
+</html>

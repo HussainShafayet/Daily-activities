@@ -1,5 +1,6 @@
 {% extends 'base.html' %}{% load crispy_forms_tags %} {% block title %}Edit{% endblock %} {% block content %}
 <div class="container">
+    <div id="edit-form">
     <div>
         {% if messages %} {% for message in messages %}
         <div class="alert alert-{{message.tags}}" role="alert">
@@ -7,7 +8,9 @@
         </div>
         {% endfor %} {% endif %}
     </div>
-    <div id="edit-form">
+    <div >
+        <h3 class="text-center" style="font-family:Verdana, Geneva, Tahoma, sans-serif;">Edit Expenses<hr></h3>
+        <div>
         <form action="" method="POST">
             {% csrf_token %}
             <!-- <table> {% for field in form %}
@@ -22,9 +25,11 @@
             {{form|crispy}}
             <div id="edit-btn">
                 <input class="btn btn-primary" type="submit" name="" value="Save">
-                <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'data' %}">Cansel</a>
+                <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'data' title_name %}">Cansel</a>
             </div>
         </form>
     </div>
+    </div>
+</div>
 </div>
 {% endblock %}

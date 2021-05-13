@@ -21,6 +21,11 @@ from django.db.models import Q
 import json
 from django.http import JsonResponse
 
+# new pdf
+from django.http import HttpResponse
+from django.views.generic import View
+from Daily_activities.utils import render_to_pdf
+
 
 # Create your views here.
 
@@ -132,78 +137,142 @@ def about(request):
 
 
 @login_required(login_url='login')
-def data(request):
+def data(request, title_name):
     current_user = request.user
     catgs = Category.objects.filter(user=current_user)
+    get_exps_title = ExpensesTitle.objects.get(user=current_user, title=title_name)
     if ('search') in request.GET:
         cat = request.GET.get('search')
         if cat:
-            catgs = Category.objects.filter(user=current_user).filter(
+            if get_exps_title.active == False:
+                value = 'show_data'
+                context = {
+                    'value': value,
+                    'title_name': get_exps_title,
+
+                }
+                return render(request, 'data.html', context)
+            catgs = Category.objects.filter(user=current_user, title=get_exps_title).filter(
                 Q(category__icontains=str(cat)))
             if catgs:
                 test = []
                 for i in catgs:
                     expen = Expenses.objects.filter(
-                        user=current_user, category=i, active=True).order_by('date')
+                        user=current_user, category=i, title=get_exps_title).order_by('date')
                     for j in expen:
                         test.append(j)
                 if not test:
+                    value = 'show_data'
                     context = {
-                        'message': 'Not found.'
+                        'message': 'Not found.',
+                        'value': value,
+                        'title_name': title_name,
                     }
                     return render(request, 'data.html', context)
                 amount = 0
                 for i in test:
                     amount = amount + (i.amount)
                 val = 'amount'
+                value = 'show_data'
                 context = {
                     'cat': cat,
                     'catgs': catgs,
                     'total_exps': amount,
                     'exps': test,
                     'val': val,
+                    'title_name': get_exps_title,
+                    'value': value,
                 }
                 return render(request, 'data.html', context)
             else:
-                exps = Expenses.objects.filter(user=current_user, active=True).filter(
+                if get_exps_title.active == False:
+                    value = 'show_data'
+                    context = {
+                        'value': value,
+                        'title_name': get_exps_title,
+
+                    }
+                    return render(request, 'data.html', context)
+                exps = Expenses.objects.filter(user=current_user, title=get_exps_title).filter(
                     Q(purpose__icontains=str(cat)) | Q(amount__icontains=str(cat)) | Q(date__icontains=str(cat)))
                 if not exps:
+                    value = 'show_data'
                     context = {
-                        'message': 'Not found.'
+                        'message': 'Not found.',
+                        'value': value,
+                        'title_name': get_exps_title,
                     }
                     return render(request, 'data.html', context)
                 total_exps = exps.aggregate(Sum('amount'))
+                value = 'show_data'
                 context = {
                     'cat': cat,
                     'catgs': catgs,
                     'total_exps': total_exps,
-                    'exps': exps
+                    'exps': exps,
+                    'value': value,
+                    'title_name': get_exps_title
                 }
                 return render(request, 'data.html', context)
         else:
-            catgs = Category.objects.filter(user=current_user)
-            exps = Expenses.objects.filter(
-                user=current_user, active=True).order_by('category', 'date',)
+            get_exps_title = ExpensesTitle.objects.get(user=current_user, title=title_name)
+            if get_exps_title.active == False:
+                value = 'show_data'
+                context = {
+                    'value': value,
+                    'title_name': get_exps_title,
+
+                }
+                return render(request, 'data.html', context)
+            exps = Expenses.objects.filter(user=current_user, title=get_exps_title).order_by('category', 'date',)
             total_exps = exps.aggregate(Sum('amount'))
+            value = 'show_data'
             context = {
                 'catgs': catgs,
                 'total_exps': total_exps,
-                'exps': exps
+                'exps': exps,
+                'value': value,
+                'title_name': get_exps_title
             }
             return render(request, 'data.html', context)
 
     else:
-        catgs = Category.objects.filter(user=current_user)
-        exps = Expenses.objects.filter(
-            user=current_user, active=True).order_by('category', 'date',)
+        get_exps_title = ExpensesTitle.objects.get(user=current_user, title=title_name)
+        if get_exps_title.active == False:
+            value = 'show_data'
+            context = {
+                'value': value,
+                'title_name': get_exps_title,
+
+            }
+            return render(request, 'data.html', context)
+        exps = Expenses.objects.filter(user=current_user, title=get_exps_title).order_by('category', 'date',)
         total_exps = exps.aggregate(Sum('amount'))
+        value = 'show_data'
         context = {
-            'catgs': catgs,
+
             'total_exps': total_exps,
-            'exps': exps
+            'exps': exps,
+            'value': value,
+            'title_name': get_exps_title
         }
         return render(request, 'data.html', context)
 
+
+def GeneratePdf(request, title_name):
+    current_user=request.user
+    get_exps_title = ExpensesTitle.objects.get(user=current_user, title=title_name)
+    exps = Expenses.objects.filter(user=current_user, title=get_exps_title).order_by('category', 'date',)
+    total_exps = exps.aggregate(Sum('amount'))
+    data = {
+
+            'total_exps': total_exps,
+            'exps': exps,
+            'title_name': get_exps_title
+    }
+    pdf = render_to_pdf('pdf.html', data)
+
+    return HttpResponse(pdf, content_type='application/pdf')
 
 def search_item(request):
     if request.method == "POST":
@@ -222,11 +291,10 @@ def search_item(request):
             amount = amount + (i.amount)
 
         #data = test.values()
-        # print(data)
         return JsonResponse(expen, safe=False)
 
 
-def expenses_tilte(request):
+def add_expenses_tilte(request):
     if request.method == 'POST':
         form = Expenses_Title_Form(request.POST, user=request.user)
         if form.is_valid():
@@ -235,7 +303,7 @@ def expenses_tilte(request):
             new_record_title = ExpensesTitle(user=current_user, title=title)
             new_record_title.save()
             messages.success(request, 'Thank you for your journey.')
-            return redirect('add')
+            return redirect('add', title)
         else:
             context = {
                 'form': form,
@@ -249,40 +317,76 @@ def expenses_tilte(request):
         return render(request, 'exps_tilte.html', context)
 
 
+def show_expenses_title(request):
+    all_expenses_title = ExpensesTitle.objects.filter(
+        user=request.user, active=True)
+    context = {
+        'all_expenses_title': all_expenses_title,
+    }
+    return render(request, 'form.html', context)
+
+
+def show_expenses_title2(request):
+    all_expenses_title = ExpensesTitle.objects.filter(
+        user=request.user, active=True)
+    context = {
+        'all_expenses_title': all_expenses_title,
+    }
+    return render(request, 'data.html', context)
+
+
+def archive_expenses(request):
+    all_expenses_title = ExpensesTitle.objects.filter(
+        user=request.user, active=False)
+    context = {
+        'all_expenses_title': all_expenses_title,
+    }
+    return render(request, 'archive.html', context)
 @login_required(login_url='login')
-def form(request):
+def form(request, title_name):
     if request.method == 'POST':
-        exp_form = MyExpenses(request.user, request.POST)
+        exp_form = MyExpenses(request.user, request.POST,
+                              title_name=title_name)
         if exp_form.is_valid():
             exp = Expenses()
             exp.user = request.user
-
+            get_expenses_title = ExpensesTitle.objects.get(
+                user=request.user, title=title_name)
+            exp.title = get_expenses_title
             exp.category = exp_form.cleaned_data['category']
             exp.purpose = exp_form.cleaned_data['purpose']
             exp.amount = exp_form.cleaned_data['amount']
             exp.save()
             messages.success(request, 'Added Successfully.')
-            return redirect('data')
+            return redirect('data', title_name)
         else:
             messages.warning(request, 'Try again!')
             context = {
-                'exp_form': exp_form
+                'exp_form': exp_form,
+                'title_name': title_name
             }
             return render(request, 'form.html', context)
 
     else:
-        exp_form = MyExpenses(request.user)
+        exp_form = MyExpenses(request.user, title_name=title_name)
+        get_expenses_title = ExpensesTitle.objects.get(
+            user=request.user, title=title_name)
         exp_form.user = request.user
+        value = 'add_expenses'
         context = {
-            'exp_form': exp_form
+            'exp_form': exp_form,
+            'value': value,
+            'get_expenses_title': get_expenses_title.title,
+            'title_name': title_name,
         }
     return render(request, 'form.html', context)
 
 
 @login_required(login_url='login')
-def add_category(request):
+def add_category(request, title_name):
     if request.method == 'POST':
-        category = Add_category(request.POST,user=request.user)
+        category = Add_category(
+            request.POST, user=request.user, title_name=title_name)
         if category.is_valid():
             #all_cat = Category.objects.all()
             cat = Category()
@@ -295,16 +399,20 @@ def add_category(request):
                     return redirect('category') """
             cat.save()
             messages.success(request, 'Category added successfully.')
-            return redirect('add')
+            return redirect('add', title_name)
         else:
             context = {
-                'category': category
+                'category': category,
+                'title_name': title_name,
             }
             return render(request, 'category.html', context)
     else:
-        category = Add_category(user=request.user)
+        category = Add_category(user=request.user, title_name=title_name)
+        get_expenses_title = ExpensesTitle.objects.get(
+            user=request.user, title=title_name)
         context = {
-            'category': category
+            'category': category,
+            'get_expenses_title': get_expenses_title,
         }
     return render(request, 'category.html', context)
 
@@ -317,38 +425,47 @@ def show_catg(request):
 
 
 @login_required(login_url='login')
-def edit(request, id):
-    expense = Expenses.objects.get(id=id)
+def edit(request, id, title_name):
+    get_title = ExpensesTitle.objects.get(user=request.user, title=title_name)
+    expense = Expenses.objects.get(id=id, title=get_title)
     if request.method == 'POST':
         expense.category = Category.objects.get(id=request.POST['category'])
         expense.purpose = request.POST['purpose']
         expense.amount = request.POST['amount']
         expense.save()
         messages.success(request, 'Update successfully.')
-        return redirect('data')
+        return redirect('data', title_name)
     else:
-        form = MyExpenses(instance=expense, user=request.user)
+        form = MyExpenses(instance=expense, user=request.user,
+                          title_name=title_name)
         context = {
-            'form': form
+            'form': form,
+            'title_name': title_name
         }
     return render(request, 'edit.html', context)
 
 
 @login_required(login_url='login')
-def delete(request, id):
-    expense = Expenses.objects.get(id=id)
+def delete(request, id, title_name):
+    expense = Expenses.objects.get(id=id, title=title_name)
     expense.delete()
     messages.success(request, 'Deleted Successfully.')
-    return redirect('data')
+    return redirect('data', title_name)
 
 
-def expenses_active(request):
+def expenses_active(request, title_name):
     current_user = request.user
-    expenses = Expenses.objects.filter(user=current_user, active=True)
-    for i in expenses:
-        i.active = False
-        i.save()
-    return redirect('data')
+    get_exps_title = ExpensesTitle.objects.get(
+        user=current_user, title=title_name)
+    print(get_exps_title.active)
+    if get_exps_title.active == True:
+        get_exps_title.active = False
+        get_exps_title.save()
+        return redirect('data', title_name)
+    else:
+        get_exps_title.active = True
+        get_exps_title.save()
+        return redirect('data', title_name)
 
 
 @login_required(login_url='login')

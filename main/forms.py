@@ -16,7 +16,7 @@ class Expenses_Title_Form(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
-        super(Expenses_Title_Form,self).__init__(*args, **kwargs)
+        super(Expenses_Title_Form, self).__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super(Expenses_Title_Form, self).clean()
@@ -35,31 +35,35 @@ class MyExpenses(forms.ModelForm):
         ]
 
     def __init__(self, user, *args, **kwargs):
+        self.title_name = kwargs.pop('title_name', None)
         super(MyExpenses, self).__init__(*args, **kwargs)
-        self.fields['category'].queryset = Category.objects.filter(user=user)
+        get_title=ExpensesTitle.objects.get(user=user,title=self.title_name)
+        self.fields['category'].queryset = Category.objects.filter(user=user,title=get_title)
 
 
 class Add_category(forms.ModelForm):
     class Meta:
         model = Category
         fields = [
-            'title','category'
+            'title', 'category'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'Enter category'})
         }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user',None)
+        self.user = kwargs.pop('user', None)
+        self.title_name = kwargs.pop('title_name', None)
         super(Add_category, self).__init__(*args, **kwargs)
-        
+        self.fields['title'].queryset = ExpensesTitle.objects.filter(user=self.user, title=self.title_name)
+
     def clean(self):
 
         cleaned_data = super(Add_category, self).clean()
         category = cleaned_data.get("category")
-        title=cleaned_data.get('title')
+        title = cleaned_data.get('title')
 
-        if Category.objects.filter(category=category,user=self.user,title=title):
+        if Category.objects.filter(category=category, user=self.user, title=title):
             raise forms.ValidationError('Category already exists.')
         return self.cleaned_data
 

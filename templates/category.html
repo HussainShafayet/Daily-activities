@@ -25,13 +25,11 @@
 
                     {% endfor %}
                 </table> -->
-                {{category|crispy}} 
-                
-                {% if error %}
+                {{category|crispy}} {% if error %}
                 <p class="text-danger">{{error}}</p>
                 {% endif %}
                 <div id="catg-btn"><input type="submit" class="btn btn-info" value="Add">
-                    <a style="margin-left: 10px;" class="btn btn-secondary" href="{% url 'add' %}">Cansel</a>
+                    <a style="margin-left: 10px;" class="btn btn-secondary" href="">Cansel</a>
                 </div>
             </form>
         </div>

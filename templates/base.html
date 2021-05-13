@@ -20,7 +20,7 @@
     <div>
         <nav>
             <div id="logo">
-                <h2  style="font-family:'Caveat', cursive;"> Daily Activities</h2>
+                <h2 style="font-family:'Caveat', cursive;"> Daily Activities</h2>
             </div>
 
             <ul>
@@ -31,11 +31,10 @@
                 <li class="items">
                     <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
                 </li>
-                <li class="items">
-                    <a id="ad" href="{% url 'add' %}"><i class="fas fa-plus-circle"></i> Add</a>
-                </li>
-                <li class="items"> <a href="{% url 'new_record' %}"><i class="fas fa-eye"></i> New record</a></li>
-                <li class="items"> <a href="{% url 'data' %}"><i class="fas fa-eye"></i> show</a></li>
+                
+                <li class="items"> <a href="{% url 'show_expenses_title' %}"><i class="fas fa-plus"></i> New record</a></li>
+                <li class="items"> <a href="{% url 'show_expenses_title2' %}"><i class="fas fa-eye"></i> show</a></li>
+                <li class="items"> <a href="{% url 'archive' %}"><i class="fas fa-eye"></i> Archive Expenses</a></li>
                 {%else%}
                 <li class="items">
                     <a href="{% url 'main' %}"> <i class="fas fa-home"></i> home</a>
@@ -79,7 +78,7 @@
         {% block content %}{% endblock %}
     </div>
 
-    
+
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js "></script> -->
     <!-- <script src="https://kit.fontawesome.com/bf12ee2437.js " crossorigin="anonymous "></script> -->
